@@ -1,0 +1,66 @@
+@baseUrl = http://localhost:3000/api/test
+@bearer = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmVkYTljYzU1MTYyNTljYWJhYmFmZCIsImlhdCI6MTc2NDY3OTUzOSwiZXhwIjoxNzY1Mjg0MzM5fQ.LvERu5qJEv58VcryH_Xg7WBH9Or0bNs_GzMy6nLXTOY
+@testId = 692ee232ddb3e6de990c6c34
+
+### Create a new test
+POST {{baseUrl}}/new
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+  "title": "Sample Test",
+  "description": "This is a sample test description"
+}
+
+### Get all tests for the logged-in user
+GET {{baseUrl}}/all
+Authorization: Bearer {{bearer}}
+
+### Get a single test by ID
+GET {{baseUrl}}/{{testId}}
+Authorization: Bearer {{bearer}}
+
+### Edit a test
+PUT {{baseUrl}}/{{testId}}
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+  "title": "Updated Test Title",
+  "description": "Updated description",
+  "isActive": true
+}
+
+### Delete a test
+DELETE {{baseUrl}}/{{testId}}
+Authorization: Bearer {{bearer}}
+
+### Add a question to a test
+POST {{baseUrl}}/{{testId}}/question/add
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+  "title": "Jaka jest stolica Polski?",
+  "media": [],
+  "answers": [
+    {
+      "type": "text",
+      "content": "Warszawa"
+    },
+    {
+      "type": "text",
+      "content": "Kraków"
+    },
+    {
+      "type": "text",
+      "content": "Gdańsk"
+    }
+  ],
+  "correctAnswers": [0],
+  "order": 1
+}
+
+### Get submissions for a test
+GET {{baseUrl}}/{{testId}}/answers
+Authorization: Bearer {{bearer}}
