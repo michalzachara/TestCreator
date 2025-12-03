@@ -29,8 +29,13 @@ const PORT = process.env.PORT || 3000
 const __dirname = path.resolve()
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
-app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
+
+app.use((req, res, next) => {
+	if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+		return next()
+	}
+
+	return res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'))
 })
 
 app.listen(PORT, () => {
