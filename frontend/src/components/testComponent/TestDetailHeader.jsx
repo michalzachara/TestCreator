@@ -1,12 +1,36 @@
 export default function TestDetailHeader({ test, questionsCount, onEditTest, onBack, onCopyLink }) {
 	if (!test) return null
 
+	const isCurrentlyActive = () => {
+		if (!test.isActive) return false
+
+		if (!test.activeFor) return true
+
+		const now = new Date()
+		const activeUntil = new Date(test.activeFor)
+		return now <= activeUntil
+	}
+
+	const testIsActive = isCurrentlyActive()
+
 	return (
 		<div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-				<div>
+				<div className="flex-1">
 					<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">{test.title}</h1>
 					<p className="text-gray-600 text-sm mt-2">{test.description}</p>
+					{test.activeFor && (
+						<p className={`text-xs sm:text-sm mt-2 ${testIsActive ? 'text-green-600' : 'text-red-600'}`}>
+							{testIsActive ? 'Aktywny do:' : 'Wygasł:'}{' '}
+							{new Date(test.activeFor).toLocaleDateString('pl-PL', {
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric',
+								hour: '2-digit',
+								minute: '2-digit',
+							})}
+						</p>
+					)}
 				</div>
 				<div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
 					<button
@@ -25,12 +49,12 @@ export default function TestDetailHeader({ test, questionsCount, onEditTest, onB
 			<div className="flex flex-wrap gap-4 text-sm items-center">
 				<span
 					className={`px-3 py-1 rounded-full font-semibold ${
-						test.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+						testIsActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
 					}`}>
-					{test.isActive ? '● Aktywny' : '● Nieaktywny'}
+					{testIsActive ? '● Aktywny' : '● Nieaktywny'}
 				</span>
 				<span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">{questionsCount} Pytania</span>
-				{test.isActive && test.uniqueLink && (
+				{testIsActive && test.uniqueLink && (
 					<button
 						type="button"
 						onClick={onCopyLink}

@@ -1,116 +1,55 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import QuestionForm from '../components/question/QuestionForm'
 import CreateTestModal from '../components/testComponent/CreateTestModal'
 import TestDetailHeader from '../components/testComponent/TestDetailHeader'
 import TestQuestionList from '../components/testComponent/TestQuestionList'
 import TestAnswersSummary from '../components/testComponent/TestAnswersSummary'
+import { useTestDetail } from '../hooks/useTestDetail'
+import { useTestAnswers } from '../hooks/useTestAnswers'
+import { useQuestions } from '../hooks/useQuestions'
+import { useQuestionForm } from '../hooks/useQuestionForm'
+import { useTestModal } from '../hooks/useTestModal'
+import { useAnswersFilters } from '../hooks/useAnswersFilters'
 
 export default function TestDetail({ addToast }) {
 	const { testId } = useParams()
 	const navigate = useNavigate()
-	const [test, setTest] = useState(null)
-	const [questions, setQuestions] = useState([])
-	const [loading, setLoading] = useState(true)
-	const [answers, setAnswers] = useState([])
-	const [answersSortBy, setAnswersSortBy] = useState('submitted_desc')
-	const [answersSearch, setAnswersSearch] = useState('')
-	const [answersPage, setAnswersPage] = useState(1)
-	const [loadingAnswers, setLoadingAnswers] = useState(false)
-	const [showQuestionForm, setShowQuestionForm] = useState(false)
-	const [editingQuestion, setEditingQuestion] = useState(null)
-	const [showTestModal, setShowTestModal] = useState(false)
 
-	const fetchTestDetail = useCallback(async () => {
-		setLoading(true)
-		try {
-			const token = localStorage.getItem('token')
-			const response = await fetch(`/api/test/${testId}`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			})
-
-			if (!response.ok) {
-				const data = await response.json()
-				addToast(data.message || 'Błąd podczas wczytywania testu', 'error')
-				navigate('/panel')
-				return
-			}
-
-			const data = await response.json()
-			setTest(data)
-			setQuestions(data.questions || [])
-		} catch (error) {
-			addToast('Błąd sieci. Spróbuj ponownie.', 'error')
-			console.error('Błąd podczas wczytywania testu:', error)
-			navigate('/panel')
-		} finally {
-			setLoading(false)
-		}
-	}, [testId, addToast, navigate])
-
-	const fetchAnswers = useCallback(async () => {
-		setLoadingAnswers(true)
-		try {
-			const token = localStorage.getItem('token')
-			const response = await fetch(`/api/test/${testId}/answers`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			})
-
-			if (!response.ok) {
-				const data = await response.json()
-				addToast(data.message || 'Błąd podczas wczytywania odpowiedzi', 'error')
-				return
-			}
-
-			const data = await response.json()
-			setAnswers(Array.isArray(data) ? data : [])
-		} catch (error) {
-			addToast('Błąd sieci przy wczytywaniu odpowiedzi. Spróbuj ponownie.', 'error')
-			console.error('Błąd podczas wczytywania odpowiedzi:', error)
-		} finally {
-			setLoadingAnswers(false)
-		}
-	}, [testId, addToast])
+	const { test, loading, updateTest } = useTestDetail(testId, addToast)
+	const { answers, loadingAnswers } = useTestAnswers(testId, addToast)
+	const {
+		questions,
+		handleQuestionAdded: onQuestionAdded,
+		handleQuestionUpdated: onQuestionUpdated,
+		handleQuestionDeleted,
+		setQuestionsFromTest,
+	} = useQuestions([], addToast)
+	const { showQuestionForm, editingQuestion, openForm, openFormForEdit, closeForm, handleQuestionSubmit } =
+		useQuestionForm()
+	const { showTestModal, openModal, closeModal, handleTestUpdated: modalHandleUpdated } = useTestModal(addToast)
+	const { answersSortBy, setAnswersSortBy, answersSearch, setAnswersSearch, answersPage, setAnswersPage } =
+		useAnswersFilters()
 
 	useEffect(() => {
-		fetchTestDetail()
-		fetchAnswers()
-	}, [fetchTestDetail, fetchAnswers])
+		if (test?.questions) {
+			setQuestionsFromTest(test.questions)
+		}
+	}, [test, setQuestionsFromTest])
 
 	const handleQuestionAdded = newQuestion => {
-		setQuestions([...questions, newQuestion])
-		setShowQuestionForm(false)
-		setEditingQuestion(null)
-		addToast('Pytanie zostało dodane', 'success')
+		onQuestionAdded(newQuestion)
+		handleQuestionSubmit()
 	}
 
 	const handleQuestionUpdated = updatedQuestion => {
-		setQuestions(questions.map(q => (q._id === updatedQuestion._id ? updatedQuestion : q)))
-		setShowQuestionForm(false)
-		setEditingQuestion(null)
-		addToast('Pytanie zostało zaktualizowane', 'success')
-	}
-
-	const handleQuestionDeleted = questionId => {
-		setQuestions(questions.filter(q => q._id !== questionId))
-		addToast('Pytanie zostało usunięte', 'success')
-	}
-
-	const handleEditQuestion = question => {
-		setEditingQuestion(question)
-		setShowQuestionForm(true)
+		onQuestionUpdated(updatedQuestion)
+		handleQuestionSubmit()
 	}
 
 	const handleTestUpdated = updatedTest => {
-		setTest(updatedTest)
-		addToast('Test został zaktualizowany', 'success')
-		setShowTestModal(false)
+		updateTest(updatedTest)
+		modalHandleUpdated(updatedTest)
 	}
 
 	const copyLinkToClipboard = () => {
@@ -142,7 +81,7 @@ export default function TestDetail({ addToast }) {
 				{showTestModal && (
 					<CreateTestModal
 						isOpen={showTestModal}
-						onClose={() => setShowTestModal(false)}
+						onClose={closeModal}
 						onTestCreated={() => {}}
 						onTestUpdated={handleTestUpdated}
 						editingTest={test}
@@ -154,17 +93,14 @@ export default function TestDetail({ addToast }) {
 				<TestDetailHeader
 					test={test}
 					questionsCount={questions.length}
-					onEditTest={() => setShowTestModal(true)}
+					onEditTest={openModal}
 					onBack={() => navigate('/panel')}
 					onCopyLink={copyLinkToClipboard}
 				/>
 
 				{/* Add Question Button */}
 				<button
-					onClick={() => {
-						setEditingQuestion(null)
-						setShowQuestionForm(true)
-					}}
+					onClick={openForm}
 					className="w-full sm:w-auto mb-6 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition duration-200 shadow-lg">
 					+ Dodaj pytanie
 				</button>
@@ -173,10 +109,7 @@ export default function TestDetail({ addToast }) {
 				{showQuestionForm && (
 					<QuestionForm
 						isOpen={showQuestionForm}
-						onClose={() => {
-							setShowQuestionForm(false)
-							setEditingQuestion(null)
-						}}
+						onClose={closeForm}
 						onQuestionAdded={handleQuestionAdded}
 						onQuestionUpdated={handleQuestionUpdated}
 						testId={testId}
@@ -188,7 +121,7 @@ export default function TestDetail({ addToast }) {
 				{/* Questions List */}
 				<TestQuestionList
 					questions={questions}
-					onEditQuestion={handleEditQuestion}
+					onEditQuestion={openFormForEdit}
 					onDeleteQuestion={handleQuestionDeleted}
 					addToast={addToast}
 				/>

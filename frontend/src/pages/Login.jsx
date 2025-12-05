@@ -1,48 +1,13 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useLoginForm } from '../hooks/auth/useLoginForm'
+import { useLoginSubmission } from '../hooks/auth/useLoginSubmission'
 
 export default function Login({ addToast }) {
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [error, setError] = useState('')
-	const [loading, setLoading] = useState(false)
-	const navigate = useNavigate()
+	const { email, setEmail, password, setPassword, resetForm } = useLoginForm()
+	const { loading, error, submitLogin } = useLoginSubmission(addToast, resetForm)
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		setError('')
-		setLoading(true)
-
-		try {
-			const response = await fetch('/api/auth/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ email, password }),
-			})
-
-			const data = await response.json()
-
-			if (!response.ok) {
-				setError(data.message || 'Błąd logowania')
-				addToast(data.message || 'Błąd logowania', 'error')
-				return
-			}
-
-			localStorage.setItem('token', data.token)
-			localStorage.setItem('user', JSON.stringify(data.user))
-
-			addToast(data.message || 'Zalogowano pomyślnie', 'success')
-			navigate('/')
-		} catch (err) {
-			const errorMsg = 'Błąd sieci. Spróbuj ponownie.'
-			setError(errorMsg)
-			addToast(errorMsg, 'error')
-			console.error('Błąd logowania:', err)
-		} finally {
-			setLoading(false)
-		}
+		await submitLogin(email, password)
 	}
 
 	return (

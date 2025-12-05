@@ -89,6 +89,18 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 		day: 'numeric',
 	})
 
+	const isCurrentlyActive = () => {
+		if (!test.isActive) return false
+
+		if (!test.activeFor) return true
+
+		const now = new Date()
+		const activeUntil = new Date(test.activeFor)
+		return now <= activeUntil
+	}
+
+	const testIsActive = isCurrentlyActive()
+
 	const copyLinkToClipboard = e => {
 		e.stopPropagation()
 		const testLink = `${window.location.origin}/test-link/${test.uniqueLink}`
@@ -107,13 +119,27 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 						<h2 className="text-lg sm:text-xl font-bold text-gray-800 transition-colors wrap-break-word group-hover:text-green-600">
 							{test.title}
 						</h2>
-						<p className="text-gray-400 text-xs sm:text-sm mt-1">{createdDate}</p>
+						<div className="flex flex-col gap-1 mt-1">
+							<p className="text-gray-400 text-xs sm:text-sm">Utworzono: {createdDate}</p>
+							{test.activeFor && (
+								<p className={`text-xs sm:text-sm ${testIsActive ? 'text-green-600' : 'text-red-600'}`}>
+									{testIsActive ? 'Aktywny do:' : 'Wygasł:'}{' '}
+									{new Date(test.activeFor).toLocaleDateString('pl-PL', {
+										year: 'numeric',
+										month: 'short',
+										day: 'numeric',
+										hour: '2-digit',
+										minute: '2-digit',
+									})}
+								</p>
+							)}
+						</div>
 					</div>
 					<div
 						className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-							test.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+							testIsActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
 						}`}>
-						{test.isActive ? '● Aktywny' : '● Nieaktywny'}
+						{testIsActive ? '● Aktywny' : '● Nieaktywny'}
 					</div>
 				</div>
 

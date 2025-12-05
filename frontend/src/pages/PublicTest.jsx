@@ -1,184 +1,49 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import Navbar from '../widgets/Navbar'
 import PublicTestHeader from '../components/publicTest/PublicTestHeader'
 import PublicTestUserForm from '../components/publicTest/PublicTestUserForm'
 import PublicTestQuestionCard from '../components/publicTest/PublicTestQuestionCard'
 import PublicTestResult from '../components/publicTest/PublicTestResult'
+import { usePublicTest } from '../hooks/publicTest/usePublicTest'
+import { usePublicTestForm } from '../hooks/publicTest/usePublicTestForm'
+import { usePublicTestAnswers } from '../hooks/publicTest/usePublicTestAnswers'
+import { usePublicTestValidation } from '../hooks/publicTest/usePublicTestValidation'
+import { usePublicTestSubmission } from '../hooks/publicTest/usePublicTestSubmission'
 
 export default function PublicTest({ addToast }) {
 	const { link } = useParams()
-	const navigate = useNavigate()
-	const [test, setTest] = useState(null)
-	const [loading, setLoading] = useState(true)
-	const [submitted, setSubmitted] = useState(false)
-	const [result, setResult] = useState(null)
-	const [formData, setFormData] = useState({
-		name: '',
-		surname: '',
-		classType: '',
-		answers: [],
-	})
-	const [fieldErrors, setFieldErrors] = useState({
-		name: false,
-		surname: false,
-		classType: false,
-	})
-	const [questionErrors, setQuestionErrors] = useState([])
-	const [alreadySubmitted, setAlreadySubmitted] = useState(false)
 
-	const storageKey = `public_test_${link}_submitted`
-
-	const fetchTest = useCallback(async () => {
-		setLoading(true)
-		try {
-			const response = await fetch(`/api/public/${link}?t=${Date.now()}`)
-			if (!response.ok) {
-				const data = await response.json()
-				console.log(data)
-
-				addToast(data.message || 'Test not found or inactive', 'error')
-				navigate('/')
-				return
-			}
-
-			const data = await response.json()
-			if (data.ok) {
-				setTest(data.test)
-				const initialAnswers = data.test.questions.map(q => ({
-					questionId: q._id,
-					selectedAnswers: [],
-				}))
-				setFormData(prev => ({ ...prev, answers: initialAnswers }))
-			} else {
-				addToast(data.message || 'Failed to load test', 'error')
-				navigate('/')
-			}
-		} catch (err) {
-			addToast('Network error. Please try again.', 'error')
-			console.error('Error fetching test:', err)
-			navigate('/')
-		} finally {
-			setLoading(false)
-		}
-	}, [link, addToast, navigate])
+	const { test, loading } = usePublicTest(link, addToast)
+	const { formData, initializeAnswers, updatePersonalData, updateAnswers } = usePublicTestForm()
+	const { fieldErrors, questionErrors, clearFieldError, validateForm, setQuestionErrors } = usePublicTestValidation()
+	const { submitted, result, alreadySubmitted, submitTest } = usePublicTestSubmission(link, addToast)
+	const { handleAnswerChange } = usePublicTestAnswers(test, formData, updateAnswers, setQuestionErrors)
 
 	useEffect(() => {
-		try {
-			const stored = localStorage.getItem(storageKey)
-			if (stored) {
-				setAlreadySubmitted(true)
-			}
-		} catch {
-			// ignorujemy problemy z localStorage
+		if (test?.questions) {
+			initializeAnswers(test.questions)
 		}
-
-		fetchTest()
-	}, [fetchTest, storageKey])
+	}, [test, initializeAnswers])
 
 	const handleInputChange = e => {
 		const { name, value } = e.target
-		setFormData(prev => ({ ...prev, [name]: value }))
-		setFieldErrors(prev => ({ ...prev, [name]: false }))
-	}
-
-	const handleAnswerChange = (questionIndex, answerIndex, isChecked) => {
-		if (!test) return
-
-		setFormData(prev => {
-			const newAnswers = [...prev.answers]
-			const question = test.questions[questionIndex]
-			const answerIndexInArray = newAnswers.findIndex(a => a.questionId === question._id)
-
-			if (answerIndexInArray !== -1) {
-				let selectedAnswers = [...newAnswers[answerIndexInArray].selectedAnswers]
-
-				if (isChecked) {
-					if (!selectedAnswers.includes(answerIndex)) {
-						selectedAnswers.push(answerIndex)
-					}
-				} else {
-					selectedAnswers = selectedAnswers.filter(idx => idx !== answerIndex)
-				}
-
-				newAnswers[answerIndexInArray].selectedAnswers = selectedAnswers.sort((a, b) => a - b)
-			}
-
-			return { ...prev, answers: newAnswers }
-		})
-
-		setQuestionErrors(prev => prev.filter(id => id !== test.questions[questionIndex]._id))
+		updatePersonalData(name, value)
+		clearFieldError(name)
 	}
 
 	const handleSubmit = async e => {
 		e.preventDefault()
 
-		if (alreadySubmitted) {
-			addToast('Ten test został już wysłany z tego urządzenia.', 'warning')
-			return
-		}
+		if (!test) return
 
-		const personalErrors = {
-			name: !formData.name.trim(),
-			surname: !formData.surname.trim(),
-			classType: !formData.classType.trim(),
-		}
-		setFieldErrors(personalErrors)
-
-		const hasPersonalErrors = Object.values(personalErrors).some(Boolean)
-
-		const unanswered = test.questions
-			.filter(q => {
-				const record = formData.answers.find(a => a.questionId === q._id)
-				return !record || record.selectedAnswers.length === 0
-			})
-			.map(q => q._id)
-		setQuestionErrors(unanswered)
-
-		if (hasPersonalErrors || unanswered.length > 0) {
+		const validation = validateForm(formData, test)
+		if (validation.hasErrors) {
 			addToast('Uzupełnij wymagane pola i odpowiedzi', 'warning')
 			return
 		}
 
-		try {
-			const response = await fetch('/api/public/result', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					uniqueLink: link,
-					name: formData.name,
-					surname: formData.surname,
-					classType: formData.classType,
-					answers: formData.answers,
-				}),
-			})
-
-			if (!response.ok) {
-				const data = await response.json()
-				addToast(data.message || 'Failed to submit test', 'error')
-				return
-			}
-
-			const data = await response.json()
-			if (data.ok) {
-				setResult(data.result)
-				setSubmitted(true)
-				try {
-					localStorage.setItem(storageKey, '1')
-					setAlreadySubmitted(true)
-				} catch {
-					// jeśli localStorage nie działa, po prostu pomijamy blokadę
-				}
-				addToast('Test submitted successfully!', 'success')
-			} else {
-				addToast(data.message || 'Failed to submit test', 'error')
-			}
-		} catch (err) {
-			addToast('Network error. Please try again.', 'error')
-			console.error('Error submitting test:', err)
-		}
+		await submitTest(formData)
 	}
 
 	if (loading) {
@@ -228,7 +93,7 @@ export default function PublicTest({ addToast }) {
 				{/* Questions */}
 				<form onSubmit={handleSubmit} className="space-y-6">
 					{test.questions.map((question, qIdx) => {
-						const answerRecord = formData.answers[qIdx]
+						const answerRecord = formData.answers.find(a => a.questionId === question._id)
 						return (
 							<PublicTestQuestionCard
 								key={question._id}

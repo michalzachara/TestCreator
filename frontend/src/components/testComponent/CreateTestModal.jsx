@@ -1,97 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useTestForm } from '../../hooks/testComponent/useTestForm'
+import { useTestFormSubmission } from '../../hooks/testComponent/useTestFormSubmission'
 
 export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTestUpdated, editingTest, addToast }) {
-	const [title, setTitle] = useState('')
-	const [description, setDescription] = useState('')
-	const [isActive, setIsActive] = useState(false)
-	const [activeFor, setActiveFor] = useState('')
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState('')
-
-	useEffect(() => {
-		if (editingTest) {
-			setTitle(editingTest.title)
-			setDescription(editingTest.description)
-			setIsActive(editingTest.isActive || false)
-			if (editingTest.activeFor) {
-				const raw = String(editingTest.activeFor)
-				const value = raw.includes('T') ? raw.slice(0, 16) : `${raw}T00:00`
-				setActiveFor(value)
-			} else {
-				setActiveFor('')
-			}
-		} else {
-			setTitle('')
-			setDescription('')
-			setIsActive(false)
-			setActiveFor('')
-		}
-		setError('')
-	}, [editingTest, isOpen])
+	const { title, setTitle, description, setDescription, isActive, setIsActive, activeFor, setActiveFor, resetForm } =
+		useTestForm(editingTest, isOpen)
+	const { loading, error, submitTest } = useTestFormSubmission(
+		editingTest,
+		addToast,
+		onTestCreated,
+		onTestUpdated,
+		resetForm
+	)
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		setError('')
-
-		if (!title.trim()) {
-			const msg = 'Tytuł jest wymagany'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		setLoading(true)
-
-		try {
-			const token = localStorage.getItem('token')
-			const method = editingTest ? 'PUT' : 'POST'
-			const url = editingTest
-				? `/api/test/${editingTest._id}`
-				: '/api/test/new'
-
-			const response = await fetch(url, {
-				method,
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({
-					title,
-					description,
-					isActive,
-					date: activeFor,
-				}),
-			})
-
-			if (!response.ok) {
-				const data = await response.json()
-				setError(data.message || 'Błąd podczas zapisywania testu')
-				addToast(data.message || 'Błąd podczas zapisywania testu', 'error')
-				return
-			}
-
-			const data = await response.json()
-
-			if (editingTest) {
-				addToast(data.message || 'Test zaktualizowany!', 'success')
-				onTestUpdated(data)
-			} else {
-				addToast(data.message || 'Test utworzony!', 'success')
-				onTestCreated(data)
-			}
-
-			setTitle('')
-			setDescription('')
-			setIsActive(false)
-			setActiveFor('')
-		} catch (err) {
-			const errorMsg = 'Błąd sieci. Spróbuj ponownie.'
-			setError(errorMsg)
-			addToast(errorMsg, 'error')
-			console.error('Error:', err)
-		} finally {
-			setLoading(false)
-		}
+		await submitTest({
+			title,
+			description,
+			isActive,
+			activeFor,
+		})
 	}
 
 	if (!isOpen) return null

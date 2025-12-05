@@ -1,85 +1,19 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useRegisterForm } from '../hooks/auth/useRegisterForm'
+import { useRegisterSubmission } from '../hooks/auth/useRegisterSubmission'
 
 export default function Register({ addToast }) {
-	const [formData, setFormData] = useState({
-		name: '',
-		surname: '',
-		email: '',
-		password: '',
-		confirmPassword: '',
-	})
-	const [error, setError] = useState('')
-	const [loading, setLoading] = useState(false)
-	const navigate = useNavigate()
+	const { formData, handleChange: updateField, resetForm } = useRegisterForm()
+	const { loading, error, submitRegister } = useRegisterSubmission(addToast, resetForm)
 
 	const handleChange = e => {
 		const { name, value } = e.target
-		setFormData(prev => ({
-			...prev,
-			[name]: value,
-		}))
+		updateField(name, value)
 	}
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		setError('')
-
-		if (!formData.name || !formData.surname || !formData.email || !formData.password) {
-			const msg = 'Wszystkie pola są wymagane'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		if (formData.password !== formData.confirmPassword) {
-			const msg = 'Hasła nie pasują'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		if (formData.password.length < 6) {
-			const msg = 'Hasło musi mieć co najmniej 6 znaków'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		setLoading(true)
-
-		try {
-			const response = await fetch('/api/auth/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					name: formData.name,
-					surname: formData.surname,
-					email: formData.email,
-					password: formData.password,
-				}),
-			})
-
-			const data = await response.json()
-
-			if (!response.ok) {
-				setError(data.message || 'Błąd rejestracji')
-				addToast(data.message || 'Błąd rejestracji', 'error')
-				return
-			}
-
-			addToast(data.message || 'Rejestracja zakończona', 'success')
-			navigate('/login')
-		} catch (err) {
-			const errorMsg = 'Błąd sieci. Spróbuj ponownie.'
-			setError(errorMsg)
-			addToast(errorMsg, 'error')
-			console.error('Błąd rejestracji:', err)
-		} finally {
-			setLoading(false)
-		}
+		await submitRegister(formData)
 	}
 
 	return (

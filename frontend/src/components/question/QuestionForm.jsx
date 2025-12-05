@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useQuestionForm } from '../../hooks/question/useQuestionForm'
+import { useQuestionAnswers } from '../../hooks/question/useQuestionAnswers'
+import { useQuestionMedia } from '../../hooks/question/useQuestionMedia'
+import { useQuestionSubmission } from '../../hooks/question/useQuestionSubmission'
 
 export default function QuestionForm({
 	isOpen,
@@ -9,241 +12,56 @@ export default function QuestionForm({
 	editingQuestion,
 	addToast,
 }) {
-	const [content, setContent] = useState('')
-	const [answers, setAnswers] = useState([
-		{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-		{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-	])
-	const [imageFile, setImageFile] = useState(null)
-	const [imagePreview, setImagePreview] = useState('')
-	const [mediaType, setMediaType] = useState('none')
-	const [youtubeUrl, setYoutubeUrl] = useState('')
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState('')
+	const { content, setContent, resetForm } = useQuestionForm(editingQuestion)
+	const { answers, handleAnswerChange, addAnswer, removeAnswer, updateAnswer, resetAnswers } = useQuestionAnswers(
+		editingQuestion,
+		isOpen,
+		addToast
+	)
+	const {
+		imageFile,
+		imagePreview,
+		mediaType,
+		youtubeUrl,
+		setYoutubeUrl,
+		handleMediaTypeChange,
+		handleImageFileChange,
+		resetMedia,
+	} = useQuestionMedia(editingQuestion)
+	const { loading, error, submitQuestion, uploadImage } = useQuestionSubmission(
+		editingQuestion,
+		testId,
+		content,
+		answers,
+		mediaType,
+		imageFile,
+		imagePreview,
+		youtubeUrl,
+		addToast,
+		onQuestionAdded,
+		onQuestionUpdated,
+		onClose,
+		resetForm,
+		resetAnswers,
+		resetMedia
+	)
 
-	useEffect(() => {
-		if (editingQuestion) {
-			setContent(editingQuestion.title)
-
-			const frontendAnswers = editingQuestion.answers.map((ans, idx) => {
-				const type = ans.type || 'text'
-				const isImage = type === 'image'
-				const content = ans.content || ''
-				return {
-					text: content,
-					isCorrect: editingQuestion.correctAnswers && editingQuestion.correctAnswers.includes(idx),
-					type,
-					imagePreview: isImage && content ? content : '',
-				}
+	const handleAnswerImageUpload = async (index, file) => {
+		if (!file) return
+		const uploaded = await uploadImage(file)
+		if (uploaded) {
+			updateAnswer(index, {
+				...answers[index],
+				type: 'image',
+				text: uploaded.url,
+				imagePreview: uploaded.url,
 			})
-			setAnswers(
-				frontendAnswers.length > 0
-					? frontendAnswers
-					: [
-							{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-							{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-					  ]
-			)
-
-			setImageFile(null)
-			setImagePreview('')
-			setMediaType('none')
-			setYoutubeUrl('')
-
-			if (editingQuestion.media && editingQuestion.media.length > 0) {
-				const youtubeMedia = editingQuestion.media.find(m => m.type === 'youtube' && m.url)
-				const imageMedia = editingQuestion.media.find(m => m.type === 'image' && m.url)
-
-				if (youtubeMedia) {
-					setMediaType('youtube')
-					setYoutubeUrl(youtubeMedia.url || '')
-				} else if (imageMedia) {
-					setMediaType('image')
-					setImagePreview(imageMedia.url)
-				}
-			}
-		} else {
-			setContent('')
-			setAnswers([
-				{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-				{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-			])
-			setImageFile(null)
-			setImagePreview('')
-			setMediaType('none')
-			setYoutubeUrl('')
-		}
-		setError('')
-	}, [editingQuestion, isOpen])
-
-	const handleAnswerChange = (index, field, value) => {
-		const newAnswers = [...answers]
-		newAnswers[index] = { ...newAnswers[index], [field]: value }
-		setAnswers(newAnswers)
-	}
-
-	const addAnswer = () => {
-		setAnswers([...answers, { text: '', isCorrect: false, type: 'text', imagePreview: '' }])
-	}
-
-	const removeAnswer = index => {
-		if (answers.length > 2) {
-			setAnswers(answers.filter((_, i) => i !== index))
-		} else {
-			addToast('Minimum 2 odpowiedzi wymagane!', 'warning')
 		}
 	}
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		setError('')
-
-		if (!content.trim()) {
-			const msg = 'Pytanie jest wymagane'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		const filledAnswers = answers.filter(
-			a => (a.type === 'text' && a.text.trim()) || (a.type === 'image' && a.text && a.text.trim())
-		)
-		if (filledAnswers.length < 2) {
-			const msg = 'Minimum 2 odpowiedzi wymagane!'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		const hasCorrect = filledAnswers.some(a => a.isCorrect)
-		if (!hasCorrect) {
-			const msg = 'Minimum jedna odpowiedź musi być oznaczona jako poprawna!'
-			setError(msg)
-			addToast(msg, 'warning')
-			return
-		}
-
-		try {
-			const token = localStorage.getItem('token')
-			let media = []
-
-			if (mediaType === 'image') {
-				if (imageFile) {
-					const formData = new FormData()
-					formData.append('image', imageFile)
-
-					const uploadRes = await fetch('/api/question/upload', {
-						method: 'POST',
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-						body: formData,
-					})
-
-					if (!uploadRes.ok) {
-						const uploadData = await uploadRes.json()
-						const msg = uploadData.message || 'Błąd podczas przesyłania obrazu'
-						setError(msg)
-						addToast(msg, 'error')
-						return
-					}
-
-					const uploadData = await uploadRes.json()
-					if (uploadData.ok && uploadData.url) {
-						media = [
-							{
-								type: 'image',
-								url: uploadData.url,
-								content: '',
-							},
-						]
-					}
-				} else if (imagePreview && editingQuestion && editingQuestion.media) {
-					const existing = editingQuestion.media.find(m => m.type === 'image' && m.url)
-					if (existing) {
-						media = [
-							{
-								type: 'image',
-								url: existing.url,
-								content: existing.content || '',
-							},
-						]
-					}
-				}
-			} else if (mediaType === 'youtube') {
-				const trimmed = youtubeUrl.trim()
-				if (trimmed) {
-					media = [
-						{
-							type: 'youtube',
-							url: trimmed,
-							content: '',
-						},
-					]
-				}
-			}
-
-			setLoading(true)
-
-			const method = editingQuestion ? 'PUT' : 'POST'
-			const url = editingQuestion ? `/api/question/${editingQuestion._id}` : `/api/test/${testId}/question/add`
-
-			const formattedAnswers = filledAnswers.map(a => ({
-				type: a.type || 'text',
-				content: a.text,
-			}))
-
-			const correctIndexes = filledAnswers.map((a, idx) => (a.isCorrect ? idx : -1)).filter(idx => idx !== -1)
-
-			const response = await fetch(url, {
-				method,
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({
-					title: content,
-					media,
-					answers: formattedAnswers,
-					correctAnswers: correctIndexes,
-				}),
-			})
-
-			if (!response.ok) {
-				const data = await response.json()
-				setError(data.message || 'Błąd podczas zapisywania pytania')
-				addToast(data.message || 'Błąd podczas zapisywania pytania', 'error')
-				return
-			}
-
-			const data = await response.json()
-
-			if (editingQuestion) {
-				onQuestionUpdated(data)
-			} else {
-				onQuestionAdded(data)
-			}
-
-			setContent('')
-			setAnswers([
-				{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-				{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
-			])
-
-			setImageFile(null)
-			setImagePreview('')
-			setMediaType('none')
-			setYoutubeUrl('')
-
-			onClose()
-		} catch (err) {
-			const errorMsg = 'Błąd sieci. Spróbuj ponownie.'
-			setError(errorMsg)
-			addToast(errorMsg, 'error')
-			console.error('Error:', err)
-		} finally {
-			setLoading(false)
-		}
+		await submitQuestion()
 	}
 
 	if (!isOpen) return null
@@ -284,18 +102,7 @@ export default function QuestionForm({
 							<span className="text-gray-600">Typ:</span>
 							<select
 								value={mediaType}
-								onChange={e => {
-									const value = e.target.value
-									setMediaType(value)
-									// resetuj dane przy zmianie typu
-									if (value !== 'image') {
-										setImageFile(null)
-										setImagePreview('')
-									}
-									if (value !== 'youtube') {
-										setYoutubeUrl('')
-									}
-								}}
+								onChange={e => handleMediaTypeChange(e.target.value)}
 								className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-green-500">
 								<option value="none">Brak</option>
 								<option value="image">Obraz</option>
@@ -308,16 +115,7 @@ export default function QuestionForm({
 								<input
 									type="file"
 									accept="image/*"
-									onChange={e => {
-										const file = e.target.files?.[0]
-										if (file) {
-											setImageFile(file)
-											setImagePreview(URL.createObjectURL(file))
-										} else {
-											setImageFile(null)
-											setImagePreview('')
-										}
-									}}
+									onChange={e => handleImageFileChange(e.target.files?.[0])}
 									className="text-sm"
 								/>
 								{imagePreview && (
@@ -398,51 +196,7 @@ export default function QuestionForm({
 												<input
 													type="file"
 													accept="image/*"
-													onChange={async e => {
-														const file = e.target.files?.[0]
-														if (!file) return
-														try {
-															const token = localStorage.getItem('token')
-															const formData = new FormData()
-															formData.append('image', file)
-
-															const uploadRes = await fetch('/api/question/upload', {
-																method: 'POST',
-																headers: {
-																	Authorization: `Bearer ${token}`,
-																},
-																body: formData,
-															})
-
-															if (!uploadRes.ok) {
-																const uploadData = await uploadRes.json()
-																const msg = uploadData.message || 'Błąd podczas przesyłania obrazu odpowiedzi'
-																setError(msg)
-																addToast(msg, 'error')
-																return
-															}
-
-															const uploadData = await uploadRes.json()
-															if (uploadData.ok && uploadData.url) {
-																const newAnswers = [...answers]
-																newAnswers[index] = {
-																	...newAnswers[index],
-																	type: 'image',
-																	text: uploadData.url,
-																	// backend zwraca ścieżkę zaczynającą się od `/uploads/...`
-																	// serwowana jest spod `app.use('/uploads', express.static('uploads'))`
-																	// więc w src używamy jej bez dodatkowego `/api`
-																	imagePreview: uploadData.url,
-																}
-																setAnswers(newAnswers)
-															}
-														} catch (err) {
-															const msg = 'Błąd sieci podczas przesyłania obrazu odpowiedzi.'
-															setError(msg)
-															addToast(msg, 'error')
-															console.error(err)
-														}
-													}}
+													onChange={e => handleAnswerImageUpload(index, e.target.files?.[0])}
 													className="text-xs"
 												/>
 												{answer.imagePreview && (

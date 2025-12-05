@@ -82,22 +82,21 @@ export const getResult = async (req, res) => {
 			return res.status(404).json({ ok: false, message: 'Test nie znaleziony dla podanego linku.' })
 		}
 
-		// Test musi być aktywny i nieprzeterminowany żeby przyjąć odpowiedzi
 		if (!test.isActive) {
 			return res.status(403).json({ ok: false, message: 'Ten test jest obecnie nieaktywny.' })
 		}
 
-		// if (test.activeFor) {
-		//   const now = new Date()
-		//   const expireAt = new Date(test.activeFor)
+		if (test.activeFor) {
+		  const now = new Date()
+		  const expireAt = new Date(test.activeFor)
 
-		//   if (now > expireAt) {
-		//     return res.status(410).json({
-		//       ok: false,
-		//       message: 'Czas na wypełnienie tego testu minął. Odpowiedzi nie zostały zapisane.',
-		//     })
-		//   }
-		// }
+		  if (now > expireAt) {
+		    return res.status(410).json({
+		      ok: false,
+		      message: 'Czas na wypełnienie tego testu minął. Odpowiedzi nie zostały zapisane.',
+		    })
+		  }
+		}
 
 		const testId = test._id
 

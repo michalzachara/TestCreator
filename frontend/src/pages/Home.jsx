@@ -1,66 +1,35 @@
-import { useState, useEffect, useCallback } from 'react'
 import CreateTestModal from '../components/testComponent/CreateTestModal'
 import TestCard from '../components/testComponent/TestCard'
+import { useTests } from '../hooks/useTests'
+import { useTestsManagement } from '../hooks/useTestsManagement'
+import { useTestModalState } from '../hooks/useTestModalState'
 
 export default function Home({ addToast }) {
-	const [showModal, setShowModal] = useState(false)
-	const [tests, setTests] = useState([])
-	const [loading, setLoading] = useState(false)
-	const [editingTest, setEditingTest] = useState(null)
-
-	const fetchTests = useCallback(async () => {
-		setLoading(true)
-		try {
-			const token = localStorage.getItem('token')
-			const response = await fetch('/api/test/all', {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			})
-
-			if (response.ok) {
-				const data = await response.json()
-				setTests(data)
-			} else {
-				const data = await response.json()
-				addToast(data.message || 'Błąd podczas wczytywania testów', 'error')
-			}
-		} catch (error) {
-			addToast('Błąd sieci. Spróbuj ponownie.', 'error')
-			console.error('Błąd podczas wczytywania testów:', error)
-		} finally {
-			setLoading(false)
-		}
-	}, [addToast])
-
-	useEffect(() => {
-		fetchTests()
-	}, [fetchTests])
+	const { tests, loading, setTests } = useTests(addToast)
+	const {
+		handleTestCreated: onTestCreated,
+		handleTestUpdated: onTestUpdated,
+		handleTestDeleted,
+		handleTestDuplicated,
+	} = useTestsManagement(tests, setTests)
+	const {
+		showModal,
+		editingTest,
+		openModal,
+		openModalForEdit,
+		closeModal,
+		handleTestCreated: modalHandleCreated,
+		handleTestUpdated: modalHandleUpdated,
+	} = useTestModalState()
 
 	const handleTestCreated = newTest => {
-		setTests([newTest, ...tests])
-		setShowModal(false)
-		setEditingTest(null)
+		const processedTest = modalHandleCreated(newTest)
+		onTestCreated(processedTest)
 	}
 
 	const handleTestUpdated = updatedTest => {
-		setTests(tests.map(t => (t._id === updatedTest._id ? updatedTest : t)))
-		setShowModal(false)
-		setEditingTest(null)
-	}
-
-	const handleTestDeleted = testId => {
-		setTests(tests.filter(t => t._id !== testId))
-	}
-
-	const handleTestDuplicated = newTest => {
-		setTests([newTest, ...tests])
-	}
-
-	const handleEditTest = test => {
-		setEditingTest(test)
-		setShowModal(true)
+		const processedTest = modalHandleUpdated(updatedTest)
+		onTestUpdated(processedTest)
 	}
 
 	return (
@@ -69,10 +38,7 @@ export default function Home({ addToast }) {
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
 					<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">Moje testy</h1>
 					<button
-						onClick={() => {
-							setEditingTest(null)
-							setShowModal(true)
-						}}
+						onClick={openModal}
 						className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition duration-200 shadow-lg text-sm sm:text-base">
 						+ Utwórz test
 					</button>
@@ -81,10 +47,7 @@ export default function Home({ addToast }) {
 				{showModal && (
 					<CreateTestModal
 						isOpen={showModal}
-						onClose={() => {
-							setShowModal(false)
-							setEditingTest(null)
-						}}
+						onClose={closeModal}
 						onTestCreated={handleTestCreated}
 						onTestUpdated={handleTestUpdated}
 						editingTest={editingTest}
@@ -106,7 +69,7 @@ export default function Home({ addToast }) {
 							<TestCard
 								key={test._id}
 								test={test}
-								onEdit={handleEditTest}
+								onEdit={openModalForEdit}
 								onDelete={handleTestDeleted}
 								onDuplicate={handleTestDuplicated}
 								addToast={addToast}
