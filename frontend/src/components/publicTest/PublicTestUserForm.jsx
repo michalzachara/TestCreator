@@ -64,7 +64,10 @@ export default function PublicTestUserForm({ formData, fieldErrors, onChange }) 
 							{CLASSES_BY_GROUP.map((group, groupIndex) => (
 								<optgroup key={groupIndex} label={`Klasy ${groupIndex + 1}`}>
 									{group.map(className => (
-										<option key={className} value={className} className="text-gray-800 font-medium py-2">
+										<option
+											key={className}
+											value={groupIndex + 1 + className}
+											className="text-gray-800 font-medium py-2">
 											{groupIndex + 1}
 											{className}
 										</option>
