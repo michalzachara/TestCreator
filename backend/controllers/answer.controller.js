@@ -19,7 +19,6 @@ export const getAnswers = async (req, res) => {
 			.populate('testId', 'title description uniqueLink')
 			.sort({ submittedAt: -1 })
 
-		// Zwracamy zawsze tablicę (może być pusta)
 		res.status(200).json(answers)
 	} catch (error) {
 		console.error('Error fetching answers:', error)
@@ -45,7 +44,6 @@ export const getAnswerDetail = async (req, res) => {
 			return res.status(404).json({ ok: false, message: 'Odpowiedź nie została znaleziona.' })
 		}
 
-		// Sprawdzenie, czy zalogowany użytkownik jest właścicielem testu
 		if (answer.testId && answer.testId.userId && answer.testId.userId.toString() !== req.user.id) {
 			return res.status(403).json({ ok: false, message: 'Brak dostępu do tej odpowiedzi.' })
 		}

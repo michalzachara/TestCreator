@@ -87,15 +87,15 @@ export const getResult = async (req, res) => {
 		}
 
 		if (test.activeFor) {
-		  const now = new Date()
-		  const expireAt = new Date(test.activeFor)
+			const now = new Date()
+			const expireAt = new Date(test.activeFor)
 
-		  if (now > expireAt) {
-		    return res.status(410).json({
-		      ok: false,
-		      message: 'Czas na wypełnienie tego testu minął. Odpowiedzi nie zostały zapisane.',
-		    })
-		  }
+			if (now > expireAt) {
+				return res.status(410).json({
+					ok: false,
+					message: 'Czas na wypełnienie tego testu minął. Odpowiedzi nie zostały zapisane.',
+				})
+			}
 		}
 
 		const testId = test._id

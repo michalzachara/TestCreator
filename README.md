@@ -7,8 +7,8 @@
 Clone the repository and navigate to the main directory:
 
 ```bash
-git clone https://github.com/michalzachara/FormCreator.git
-cd FormCreator
+git clone https://github.com/michalzachara/TestCreator.git
+cd TestCreator
 ```
 
 Create a `.env` file in folder:

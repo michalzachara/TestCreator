@@ -36,7 +36,7 @@ const isImageUsedInOtherQuestions = async (imageUrl, excludeQuestionId, userId) 
 		return false
 	} catch (err) {
 		console.error('Error checking if image is used:', err)
-		return true 
+		return true
 	}
 }
 
@@ -140,7 +140,6 @@ export const editQuestion = async (req, res) => {
 			})
 		}
 
-		// przygotuj listę starych plików do ewentualnego usunięcia
 		const oldImageUrls = []
 		if (question.media && question.media.length) {
 			question.media.filter(m => m.type === 'image' && m.url).forEach(m => oldImageUrls.push(m.url))
@@ -149,7 +148,6 @@ export const editQuestion = async (req, res) => {
 			question.answers.filter(a => a.type === 'image' && a.content).forEach(a => oldImageUrls.push(a.content))
 		}
 
-		// lista nowych plików obrazów
 		const newImageUrls = []
 		if (media && media.length) {
 			media.filter(m => m.type === 'image' && m.url).forEach(m => newImageUrls.push(m.url))
@@ -158,10 +156,8 @@ export const editQuestion = async (req, res) => {
 			answers.filter(a => a.type === 'image' && a.content).forEach(a => newImageUrls.push(a.content))
 		}
 
-		// usuń pliki, które były wcześniej, ale nie ma ich w nowych danych
 		const toDelete = oldImageUrls.filter(url => !newImageUrls.includes(url))
 
-		// Sprawdź czy każdy plik do usunięcia jest używany gdzie indziej
 		for (const imageUrl of toDelete) {
 			const isUsed = await isImageUsedInOtherQuestions(imageUrl, id, req.user.id)
 			if (!isUsed) {
@@ -206,7 +202,6 @@ export const deleteQuestion = async (req, res) => {
 			return res.status(403).json({ message: 'Access denied' })
 		}
 
-		// Zbierz wszystkie obrazy z pytania
 		const imageUrls = []
 		if (question.media && question.media.length) {
 			question.media.filter(m => m.type === 'image' && m.url).forEach(m => imageUrls.push(m.url))
@@ -215,10 +210,8 @@ export const deleteQuestion = async (req, res) => {
 			question.answers.filter(a => a.type === 'image' && a.content).forEach(a => imageUrls.push(a.content))
 		}
 
-		// Usuń pytanie z bazy danych
 		await Question.findByIdAndDelete(id)
 
-		// Dla każdego obrazu sprawdź czy jest używany gdzie indziej
 		for (const imageUrl of imageUrls) {
 			const isUsed = await isImageUsedInOtherQuestions(imageUrl, id, req.user.id)
 			if (!isUsed) {

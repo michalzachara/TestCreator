@@ -126,7 +126,6 @@ export const deleteTest = async (req, res) => {
 			return res.status(403).json({ message: 'Access denied' })
 		}
 
-		// znajdź wszystkie pytania, żeby ewentualnie usunąć powiązane obrazki
 		const questions = await Question.find({ testId: id })
 
 		for (const q of questions) {
@@ -138,7 +137,6 @@ export const deleteTest = async (req, res) => {
 				q.answers.filter(a => a.type === 'image' && a.content).forEach(a => imageUrls.push(a.content))
 			}
 
-			// usuń fizyczny plik tylko wtedy, gdy nie jest używany w innym teście
 			for (const url of imageUrls) {
 				const stillUsed = await Question.exists({
 					testId: { $ne: id },
@@ -167,7 +165,6 @@ export const duplicateTest = async (req, res) => {
 	const userId = req.user.id
 
 	try {
-		// Find original test
 		const originalTest = await Test.findById(id).populate({
 			path: 'questions',
 			options: { sort: { order: 1 } },
@@ -181,7 +178,6 @@ export const duplicateTest = async (req, res) => {
 			return res.status(403).json({ message: 'Access denied' })
 		}
 
-		// Find the next copy number
 		const baseTitle = originalTest.title.includes(' - Copy(')
 			? originalTest.title.split(' - Copy(')[0]
 			: originalTest.title
@@ -200,10 +196,8 @@ export const duplicateTest = async (req, res) => {
 			copyNumber = Math.max(...numbers) + 1
 		}
 
-		// Generate new unique link
 		const uniqueLink = crypto.randomUUID()
 
-		// Create new test
 		const newTest = await Test.create({
 			userId,
 			title: `${baseTitle} - Copy(${copyNumber})`,
@@ -213,7 +207,6 @@ export const duplicateTest = async (req, res) => {
 			uniqueLink,
 		})
 
-		// Duplicate all questions
 		if (originalTest.questions && originalTest.questions.length > 0) {
 			const newQuestions = await Promise.all(
 				originalTest.questions.map(question =>
@@ -227,7 +220,6 @@ export const duplicateTest = async (req, res) => {
 				)
 			)
 
-			// Update test with question references
 			await Test.findByIdAndUpdate(newTest._id, {
 				questions: newQuestions.map(q => q._id),
 			})
