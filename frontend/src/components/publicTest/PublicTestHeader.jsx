@@ -5,6 +5,11 @@ export default function PublicTestHeader({ test }) {
 		<div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-6">
 			<h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">{test.title}</h1>
 			{test.description && <p className="text-gray-600 text-lg mb-3">{test.description}</p>}
+			{test.singleChoice && (
+				<p className="inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-700 mb-3">
+					Jednokrotny wybór
+				</p>
+			)}
 			{test.media &&
 				test.media.length > 0 &&
 				(() => {

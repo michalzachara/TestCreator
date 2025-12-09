@@ -102,6 +102,7 @@ export default function PublicTest({ addToast }) {
 								answerRecord={answerRecord}
 								hasError={questionErrors.includes(question._id)}
 								onAnswerChange={handleAnswerChange}
+								singleChoice={!!test.singleChoice}
 							/>
 						)
 					})}

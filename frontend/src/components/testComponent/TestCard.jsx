@@ -164,6 +164,14 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 						<span>Kopiuj link</span>
 					</button>
 				)}
+				{test.singleChoice && (
+					<div className="flex items-center gap-2 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+						<span role="img" aria-hidden="true">
+							✅
+						</span>
+						<span>Jednokrotny wybór</span>
+					</div>
+				)}
 				<button
 					onClick={handleDuplicateTest}
 					disabled={duplicating}

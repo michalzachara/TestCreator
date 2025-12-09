@@ -54,6 +54,9 @@ export default function TestDetailHeader({ test, questionsCount, onEditTest, onB
 					{testIsActive ? '● Aktywny' : '● Nieaktywny'}
 				</span>
 				<span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">{questionsCount} Pytania</span>
+				{test.singleChoice && (
+					<span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">Jednokrotny wybór</span>
+				)}
 				{testIsActive && test.uniqueLink && (
 					<button
 						type="button"

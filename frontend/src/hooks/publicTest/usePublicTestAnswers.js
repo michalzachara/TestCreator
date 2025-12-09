@@ -13,11 +13,13 @@ export function usePublicTestAnswers(test, formData, updateAnswers, setQuestionE
 				let selectedAnswers = [...newAnswers[answerIndexInArray].selectedAnswers]
 
 				if (isChecked) {
-					if (!selectedAnswers.includes(answerIndex)) {
+					if (test.singleChoice) {
+						selectedAnswers = [answerIndex]
+					} else if (!selectedAnswers.includes(answerIndex)) {
 						selectedAnswers.push(answerIndex)
 					}
 				} else {
-					selectedAnswers = selectedAnswers.filter(idx => idx !== answerIndex)
+					selectedAnswers = test.singleChoice ? [] : selectedAnswers.filter(idx => idx !== answerIndex)
 				}
 
 				newAnswers[answerIndexInArray].selectedAnswers = selectedAnswers.sort((a, b) => a - b)

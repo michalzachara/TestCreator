@@ -15,7 +15,8 @@ export function useQuestionSubmission(
 	onClose,
 	resetForm,
 	resetAnswers,
-	resetMedia
+	resetMedia,
+	isSingleChoice = false
 ) {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState('')
@@ -117,16 +118,23 @@ export function useQuestionSubmission(
 			return false
 		}
 
-		const hasCorrect = filledAnswers.some(a => a.isCorrect)
-		if (!hasCorrect) {
+		const correctCount = filledAnswers.filter(a => a.isCorrect).length
+		if (correctCount === 0) {
 			const msg = 'Minimum jedna odpowiedź musi być oznaczona jako poprawna!'
 			setError(msg)
 			addToast(msg, 'warning')
 			return false
 		}
 
+		if (isSingleChoice && correctCount > 1) {
+			const msg = 'W trybie jednokrotnym tylko jedna odpowiedź może być poprawna.'
+			setError(msg)
+			addToast(msg, 'warning')
+			return false
+		}
+
 		return true
-	}, [content, answers, addToast])
+	}, [content, answers, addToast, isSingleChoice])
 
 	const submitQuestion = useCallback(
 		async () => {
@@ -157,7 +165,10 @@ export function useQuestionSubmission(
 					content: a.text,
 				}))
 
-				const correctIndexes = filledAnswers.map((a, idx) => (a.isCorrect ? idx : -1)).filter(idx => idx !== -1)
+				const correctIndexes = filledAnswers
+					.map((a, idx) => (a.isCorrect ? idx : -1))
+					.filter(idx => idx !== -1)
+					.slice(0, isSingleChoice ? 1 : undefined)
 
 				const response = await fetch(url, {
 					method,
@@ -221,6 +232,7 @@ export function useQuestionSubmission(
 			resetForm,
 			resetAnswers,
 			resetMedia,
+			isSingleChoice,
 		]
 	)
 

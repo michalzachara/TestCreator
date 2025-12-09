@@ -18,7 +18,14 @@ const getYouTubeEmbedUrl = url => {
 	}
 }
 
-export default function PublicTestQuestionCard({ question, index, answerRecord, hasError, onAnswerChange }) {
+export default function PublicTestQuestionCard({
+	question,
+	index,
+	answerRecord,
+	hasError,
+	onAnswerChange,
+	singleChoice = false,
+}) {
 	if (!question) return null
 
 	return (
@@ -66,6 +73,7 @@ export default function PublicTestQuestionCard({ question, index, answerRecord, 
 				})()}
 
 			<div className="space-y-3">
+				{singleChoice && <p className="text-xs text-green-700 font-semibold">Wybierz jedną odpowiedź</p>}
 				{question.answers.map((answer, aIdx) => {
 					const isSelected = answerRecord?.selectedAnswers.includes(aIdx) || false
 					const isImage = answer.type === 'image'

@@ -24,6 +24,10 @@ const testSchema = Schema(
 			required: true,
 			unique: true,
 		},
+		singleChoice: {
+			type: Boolean,
+			default: false,
+		},
 		isActive: {
 			type: Boolean,
 			default: false,

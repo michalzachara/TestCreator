@@ -81,6 +81,12 @@ export const addQuestion = async (req, res) => {
 			})
 		}
 
+		if (test.singleChoice && correctAnswers.length !== 1) {
+			return res.status(400).json({
+				message: 'Ten test pozwala na oznaczenie dokładnie jednej poprawnej odpowiedzi.',
+			})
+		}
+
 		const newQuestion = await Question.create({
 			testId: test._id,
 			title,
@@ -137,6 +143,12 @@ export const editQuestion = async (req, res) => {
 		if (invalidIndexes.length > 0) {
 			return res.status(400).json({
 				message: `Invalid answer indexes: ${invalidIndexes.join(', ')}`,
+			})
+		}
+
+		if (test.singleChoice && correctAnswers.length !== 1) {
+			return res.status(400).json({
+				message: 'Ten test pozwala na oznaczenie dokładnie jednej poprawnej odpowiedzi.',
 			})
 		}
 

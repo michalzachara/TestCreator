@@ -5,12 +5,14 @@ export function useTestForm(editingTest, isOpen) {
 	const [description, setDescription] = useState('')
 	const [isActive, setIsActive] = useState(false)
 	const [activeFor, setActiveFor] = useState('')
+	const [singleChoice, setSingleChoice] = useState(false)
 
 	useEffect(() => {
 		if (editingTest) {
 			setTitle(editingTest.title || '')
 			setDescription(editingTest.description || '')
 			setIsActive(editingTest.isActive || false)
+			setSingleChoice(editingTest.singleChoice || false)
 			if (editingTest.activeFor) {
 				const raw = String(editingTest.activeFor)
 				const value = raw.includes('T') ? raw.slice(0, 16) : `${raw}T00:00`
@@ -22,6 +24,7 @@ export function useTestForm(editingTest, isOpen) {
 			setTitle('')
 			setDescription('')
 			setIsActive(false)
+			setSingleChoice(false)
 			setActiveFor('')
 		}
 	}, [editingTest, isOpen])
@@ -30,6 +33,7 @@ export function useTestForm(editingTest, isOpen) {
 		setTitle('')
 		setDescription('')
 		setIsActive(false)
+		setSingleChoice(false)
 		setActiveFor('')
 	}
 
@@ -42,6 +46,8 @@ export function useTestForm(editingTest, isOpen) {
 		setIsActive,
 		activeFor,
 		setActiveFor,
+		singleChoice,
+		setSingleChoice,
 		resetForm,
 	}
 }

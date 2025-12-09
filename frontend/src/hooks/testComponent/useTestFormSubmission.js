@@ -33,6 +33,7 @@ export function useTestFormSubmission(editingTest, addToast, onTestCreated, onTe
 						description: formData.description,
 						isActive: formData.isActive,
 						date: formData.activeFor,
+						singleChoice: formData.singleChoice,
 					}),
 				})
 

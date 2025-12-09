@@ -10,13 +10,15 @@ export default function QuestionForm({
 	onQuestionUpdated,
 	testId,
 	editingQuestion,
+	isSingleChoice = false,
 	addToast,
 }) {
 	const { content, setContent, resetForm } = useQuestionForm(editingQuestion)
 	const { answers, handleAnswerChange, addAnswer, removeAnswer, updateAnswer, resetAnswers } = useQuestionAnswers(
 		editingQuestion,
 		isOpen,
-		addToast
+		addToast,
+		isSingleChoice
 	)
 	const {
 		imageFile,
@@ -43,7 +45,8 @@ export default function QuestionForm({
 		onClose,
 		resetForm,
 		resetAnswers,
-		resetMedia
+		resetMedia,
+		isSingleChoice
 	)
 
 	const handleAnswerImageUpload = async (index, file) => {
@@ -154,14 +157,18 @@ export default function QuestionForm({
 
 					{/* Answers Section */}
 					<div className="space-y-3">
-						<p className="text-sm font-semibold text-gray-700">Odpowiedzi</p>
+						<div className="flex items-center justify-between">
+							<p className="text-sm font-semibold text-gray-700">Odpowiedzi</p>
+							{isSingleChoice && <span className="text-xs font-semibold text-green-700">Jedna poprawna</span>}
+						</div>
 						{answers.map((answer, index) => (
 							<div key={index} className="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
 								<div className="flex items-start gap-3">
 									{/* Checkbox for marking correct answer */}
 									<div className="shrink-0 pt-1">
 										<input
-											type="checkbox"
+											type={isSingleChoice ? 'radio' : 'checkbox'}
+											name={isSingleChoice ? 'singleCorrectAnswer' : `answer-${index}`}
 											checked={answer.isCorrect}
 											onChange={e => handleAnswerChange(index, 'isCorrect', e.target.checked)}
 											className="w-5 h-5 text-green-600 rounded cursor-pointer"

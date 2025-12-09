@@ -5,7 +5,7 @@ const DEFAULT_ANSWERS = [
 	{ text: '', isCorrect: false, type: 'text', imagePreview: '' },
 ]
 
-export function useQuestionAnswers(editingQuestion, isOpen, addToast) {
+export function useQuestionAnswers(editingQuestion, isOpen, addToast, isSingleChoice = false) {
 	const computedAnswers = useMemo(() => {
 		if (editingQuestion) {
 			const frontendAnswers = editingQuestion.answers.map((ans, idx) => {
@@ -33,10 +33,17 @@ export function useQuestionAnswers(editingQuestion, isOpen, addToast) {
 	const handleAnswerChange = useCallback((index, field, value) => {
 		setAnswers(prev => {
 			const newAnswers = [...prev]
-			newAnswers[index] = { ...newAnswers[index], [field]: value }
+			if (field === 'isCorrect' && value && isSingleChoice) {
+				// ensure only one correct answer
+				newAnswers.forEach((a, idx) => {
+					newAnswers[idx] = { ...a, isCorrect: idx === index }
+				})
+			} else {
+				newAnswers[index] = { ...newAnswers[index], [field]: value }
+			}
 			return newAnswers
 		})
-	}, [])
+	}, [isSingleChoice])
 
 	const addAnswer = useCallback(() => {
 		setAnswers(prev => [...prev, { text: '', isCorrect: false, type: 'text', imagePreview: '' }])

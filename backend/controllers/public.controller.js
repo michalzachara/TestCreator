@@ -46,6 +46,7 @@ export const getLink = async (req, res) => {
 				title: test.title,
 				description: test.description,
 				uniqueLink: test.uniqueLink,
+				singleChoice: test.singleChoice,
 				questions: sanitizedQuestions,
 			},
 		})
@@ -100,6 +101,18 @@ export const getResult = async (req, res) => {
 
 		const testId = test._id
 
+		if (test.singleChoice) {
+			const hasMultipleSelections = answers.some(
+				entry => Array.isArray(entry.selectedAnswers) && entry.selectedAnswers.length > 1
+			)
+			if (hasMultipleSelections) {
+				return res.status(400).json({
+					ok: false,
+					message: 'Ten test pozwala na jedną wybraną odpowiedź w każdym pytaniu.',
+				})
+			}
+		}
+
 		const questionIds = answers.map(a => a.questionId)
 
 		const questions = await Question.find({
@@ -118,7 +131,11 @@ export const getResult = async (req, res) => {
 		const results = answers
 			.map(submittedAnswer => {
 				const questionId = submittedAnswer.questionId
-				const selectedAnswers = submittedAnswer.selectedAnswers || []
+				const selectedAnswers = Array.isArray(submittedAnswer.selectedAnswers)
+					? test.singleChoice
+						? submittedAnswer.selectedAnswers.slice(0, 1)
+						: submittedAnswer.selectedAnswers
+					: []
 				const correctAnswers = correctAnswersMap[questionId]
 
 				if (correctAnswers) {
@@ -145,9 +162,13 @@ export const getResult = async (req, res) => {
 			name: name,
 			surname: surname,
 			classType: classType,
-			answers: answers.map(a => ({
-				questionId: a.questionId,
-				selectedAnswers: a.selectedAnswers || [],
+		answers: answers.map(a => ({
+			questionId: a.questionId,
+			selectedAnswers: Array.isArray(a.selectedAnswers)
+				? test.singleChoice
+					? a.selectedAnswers.slice(0, 1)
+					: a.selectedAnswers
+				: [],
 			})),
 			score: totalScore,
 			maxScore: maxPossibleScore,

@@ -21,7 +21,7 @@ const deleteFileByUrl = url => {
 }
 
 export const createTest = async (req, res) => {
-	const { title, description, isActive, date } = req.body
+	const { title, description, isActive, date, singleChoice } = req.body
 	const userId = req.user.id
 
 	try {
@@ -36,6 +36,7 @@ export const createTest = async (req, res) => {
 			isActive,
 			activeFor,
 			uniqueLink,
+			singleChoice: !!singleChoice,
 		})
 
 		return res.status(201).json(newTest)
@@ -84,7 +85,7 @@ export const getTest = async (req, res) => {
 
 export const editTest = async (req, res) => {
 	const { id } = req.params
-	const { title, description, isActive, date } = req.body
+	const { title, description, isActive, date, singleChoice } = req.body
 
 	try {
 		const test = await Test.findById(id)
@@ -102,6 +103,9 @@ export const editTest = async (req, res) => {
 		if (isActive !== undefined) test.isActive = isActive
 		if (date !== undefined) {
 			test.activeFor = date ? date : null
+		}
+		if (singleChoice !== undefined) {
+			test.singleChoice = !!singleChoice
 		}
 
 		const updatedTest = await test.save()
@@ -205,6 +209,7 @@ export const duplicateTest = async (req, res) => {
 			isActive: false,
 			activeFor: originalTest.activeFor,
 			uniqueLink,
+			singleChoice: originalTest.singleChoice,
 		})
 
 		if (originalTest.questions && originalTest.questions.length > 0) {
@@ -214,7 +219,9 @@ export const duplicateTest = async (req, res) => {
 						testId: newTest._id,
 						title: question.title,
 						answers: JSON.parse(JSON.stringify(question.answers)),
-						correctAnswers: JSON.parse(JSON.stringify(question.correctAnswers)),
+						correctAnswers: originalTest.singleChoice
+							? JSON.parse(JSON.stringify(question.correctAnswers || [])).slice(0, 1)
+							: JSON.parse(JSON.stringify(question.correctAnswers)),
 						order: question.order,
 					})
 				)

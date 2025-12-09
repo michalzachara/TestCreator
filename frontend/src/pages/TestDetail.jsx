@@ -114,6 +114,7 @@ export default function TestDetail({ addToast }) {
 						onQuestionUpdated={handleQuestionUpdated}
 						testId={testId}
 						editingQuestion={editingQuestion}
+						isSingleChoice={!!test.singleChoice}
 						addToast={addToast}
 					/>
 				)}

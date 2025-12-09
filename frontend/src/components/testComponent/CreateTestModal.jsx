@@ -2,8 +2,19 @@ import { useTestForm } from '../../hooks/testComponent/useTestForm'
 import { useTestFormSubmission } from '../../hooks/testComponent/useTestFormSubmission'
 
 export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTestUpdated, editingTest, addToast }) {
-	const { title, setTitle, description, setDescription, isActive, setIsActive, activeFor, setActiveFor, resetForm } =
-		useTestForm(editingTest, isOpen)
+	const {
+		title,
+		setTitle,
+		description,
+		setDescription,
+		isActive,
+		setIsActive,
+		activeFor,
+		setActiveFor,
+		singleChoice,
+		setSingleChoice,
+		resetForm,
+	} = useTestForm(editingTest, isOpen)
 	const { loading, error, submitTest } = useTestFormSubmission(
 		editingTest,
 		addToast,
@@ -19,6 +30,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 			description,
 			isActive,
 			activeFor,
+			singleChoice,
 		})
 	}
 
@@ -77,6 +89,28 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 							<label htmlFor="isActive" className="text-sm text-gray-700 cursor-pointer">
 								Test aktywny
 							</label>
+						</div>
+					</div>
+
+					<div>
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Tryb odpowiedzi</label>
+						<div className="flex items-start gap-3">
+							<input
+								id="singleChoice"
+								type="checkbox"
+								checked={singleChoice}
+								onChange={e => setSingleChoice(e.target.checked)}
+								className="w-5 h-5 mt-0.5 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer"
+							/>
+							<div>
+								<label htmlFor="singleChoice" className="text-sm text-gray-700 cursor-pointer font-semibold block">
+									Jednokrotny wybór
+								</label>
+								<p className="text-xs text-gray-500">
+									W tym teście każde pytanie może mieć zaznaczoną tylko jedną poprawną odpowiedź i uczestnik może
+									wybrać tylko jedną opcję.
+								</p>
+							</div>
 						</div>
 					</div>
 
