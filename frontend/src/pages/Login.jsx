@@ -11,10 +11,17 @@ export default function Login({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-white flex items-center justify-center p-4">
-			<div className="w-full max-w-md">
-				<div className="bg-white rounded-2xl shadow-xl border border-neutral-200 p-8">
-					<h1 className="text-3xl font-bold text-center text-neutral-900 mb-8 tracking-tight">Logowanie</h1>
+		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center p-4">
+			<div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center text-white">
+				<div className="space-y-4 hidden lg:block">
+					<p className="text-sm uppercase tracking-[0.3em] text-slate-200">ZSTiB Testy</p>
+					<h1 className="text-4xl font-bold leading-tight">Witaj ponownie!</h1>
+					<p className="text-slate-200/90 text-lg">
+						Wejdź do panelu, twórz testy i analizuj wyniki w nowoczesnym interfejsie.
+					</p>
+				</div>
+				<div className="w-full max-w-md mx-auto bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-200 p-8">
+					<h1 className="text-3xl font-bold text-center text-slate-900 mb-8 tracking-tight">Logowanie</h1>
 
 					{error && <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">{error}</div>}
 
@@ -52,7 +59,7 @@ export default function Login({ addToast }) {
 						<button
 							type="submit"
 							disabled={loading}
-							className="w-full bg-black hover:bg-neutral-800 disabled:bg-neutral-300 text-white font-semibold py-2 rounded-lg transition duration-200">
+							className="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white font-semibold py-3 rounded-lg transition duration-200">
 							{loading ? 'Logowanie...' : 'Logowanie'}
 						</button>
 					</form>

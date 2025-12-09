@@ -111,19 +111,19 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 	return (
 		<div
 			onClick={() => navigate(`/test/${test._id}`)}
-			className="h-full flex flex-col bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border-l-4 border-black cursor-pointer">
+			className="h-full flex flex-col bg-white/90 border border-slate-200 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
 			{/* Header Section */}
 			<div className="p-4 sm:p-5 lg:p-6">
 				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
 					<div className="flex-1 min-w-0">
-						<h2 className="text-lg sm:text-xl font-bold text-gray-800 transition-colors wrap-break-word group-hover:text-neutral-900">
+						<h2 className="text-lg sm:text-xl font-bold text-slate-900 transition-colors wrap-break-word group-hover:text-slate-800">
 							{test.title}
 						</h2>
 						<div className="flex flex-col gap-1 mt-1">
-							<p className="text-gray-400 text-xs sm:text-sm">Utworzono: {createdDate}</p>
-							{test.activeFor && (
-								<p className={`text-xs sm:text-sm ${testIsActive ? 'text-neutral-800' : 'text-red-600'}`}>
-									{testIsActive ? 'Aktywny do:' : 'Wygasł:'}{' '}
+							<p className="text-slate-500 text-xs sm:text-sm">Utworzono: {createdDate}</p>
+							{test.activeFor ? (
+								<p className={`text-xs sm:text-sm ${testIsActive ? 'text-slate-700' : 'text-red-600'}`}>
+									{testIsActive ? 'Aktywny do: ' : 'Wygasł:'}
 									{new Date(test.activeFor).toLocaleDateString('pl-PL', {
 										year: 'numeric',
 										month: 'short',
@@ -132,18 +132,20 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 										minute: '2-digit',
 									})}
 								</p>
+							) : (
+								<p className="text-xs sm:text-sm text-slate-700">Bez ograniczenia czasowego</p>
 							)}
 						</div>
 					</div>
 					<div
-						className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-							testIsActive ? 'bg-black text-white' : 'bg-neutral-200 text-neutral-700'
+						className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border ${
+							testIsActive ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-slate-200'
 						}`}>
 						{testIsActive ? '● Aktywny' : '● Nieaktywny'}
 					</div>
 				</div>
 
-				{test.description && <p className="text-gray-600 text-xs sm:text-sm mt-3 line-clamp-2">{test.description}</p>}
+				{test.description && <p className="text-slate-600 text-xs sm:text-sm mt-3 line-clamp-2">{test.description}</p>}
 			</div>
 
 			{error && (
@@ -157,25 +159,17 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 				{test.uniqueLink && (
 					<button
 						onClick={copyLinkToClipboard}
-						className="flex items-center justify-center gap-2 px-4 py-3 bg-black hover:bg-neutral-800 text-white font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
+						className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
 						<span role="img" aria-hidden="true">
 							📋
 						</span>
 						<span>Kopiuj link</span>
 					</button>
 				)}
-				{test.singleChoice && (
-					<div className="flex items-center gap-2 text-xs font-semibold text-neutral-900 bg-neutral-100 border border-neutral-200 rounded-lg px-3 py-2">
-						<span role="img" aria-hidden="true">
-							✅
-						</span>
-						<span>Jednokrotny wybór</span>
-					</div>
-				)}
 				<button
 					onClick={handleDuplicateTest}
 					disabled={duplicating}
-					className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-neutral-300 hover:border-neutral-500 disabled:bg-neutral-200 text-neutral-900 font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
+					className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 hover:border-slate-400 disabled:bg-slate-100 text-slate-900 font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
 					<span role="img" aria-hidden="true">
 						{duplicating ? '⏳' : '📄'}
 					</span>
@@ -194,7 +188,7 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 								<button
 									type="button"
 									onClick={() => setConfirming(false)}
-									className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition">
+									className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition">
 									Anuluj
 								</button>
 								<button
@@ -210,13 +204,13 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 						<div className="flex gap-2 flex-col sm:flex-row w-full">
 							<button
 								onClick={() => onEdit(test)}
-								className="flex-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-neutral-200 hover:border-neutral-300">
+								className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-slate-200 hover:border-slate-300">
 								✏️ Edytuj
 							</button>
 							<button
 								onClick={() => setConfirming(true)}
 								disabled={deleting}
-								className="flex-1 bg-red-50 hover:bg-red-100 disabled:bg-neutral-100 text-red-700 hover:text-red-800 disabled:text-gray-500 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-red-200 hover:border-red-300 disabled:border-gray-200">
+								className="flex-1 bg-red-50 hover:bg-red-100 disabled:bg-slate-100 text-red-700 hover:text-red-800 disabled:text-gray-500 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-red-200 hover:border-red-300 disabled:border-gray-200">
 								{deleting ? '⏳' : '🗑️'} <span className="hidden sm:inline">{deleting ? 'Usuwanie' : 'Usuń'}</span>
 							</button>
 						</div>

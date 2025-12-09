@@ -48,28 +48,28 @@ export default function PublicTest({ addToast }) {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-white flex items-center justify-center">
-				<p className="text-gray-600 text-lg">Loading test...</p>
+			<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white flex items-center justify-center">
+				<p className="text-slate-600 text-lg">Loading test...</p>
 			</div>
 		)
 	}
 
 	if (!test) {
 		return (
-			<div className="min-h-screen bg-white flex items-center justify-center">
-				<p className="text-gray-600 text-lg">Test not found</p>
+			<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white flex items-center justify-center">
+				<p className="text-slate-600 text-lg">Test not found</p>
 			</div>
 		)
 	}
 
 	if (alreadySubmitted && !submitted) {
 		return (
-			<div className="min-h-screen bg-white">
+			<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white">
 				<Navbar hideAuthActions />
 				<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-					<div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center">
-						<h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Ten test został już wypełniony</h1>
-						<p className="text-gray-600 mb-4">
+					<div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8 text-center">
+						<h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Ten test został już wypełniony</h1>
+						<p className="text-slate-600 mb-4">
 							Z tego urządzenia test został już wysłany. Jeśli uważasz, że to błąd, skontaktuj się z nauczycielem.
 						</p>
 					</div>
@@ -83,9 +83,9 @@ export default function PublicTest({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-white">
+		<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white">
 			<Navbar hideAuthActions />
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6">
 				<PublicTestHeader test={test} />
 
 				<PublicTestUserForm formData={formData} fieldErrors={fieldErrors} onChange={handleInputChange} />
@@ -110,7 +110,7 @@ export default function PublicTest({ addToast }) {
 					{/* Submit Button */}
 					<button
 						type="submit"
-						className="w-full bg-black hover:bg-neutral-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-lg">
+						className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-lg shadow-sm">
 						Wyślij test
 					</button>
 				</form>

@@ -121,41 +121,52 @@ export default function TestDetail({ addToast }) {
 			.join('')
 
 		printable.document.write(`
-			<!DOCTYPE html>
-			<html lang="pl">
-			<head>
-				<meta charset="UTF-8" />
-				<title>${test.title || 'Test'}${showKey ? '' : ' - do wypełnienia'}</title>
-				<style>
-					* { box-sizing: border-box; }
-					body { font-family: "Segoe UI", Arial, sans-serif; margin: 0; padding: 24px; color: #111827; }
-					h1 { margin: 0 0 8px; font-size: 26px; }
-					h2 { margin: 12px 0 8px; font-size: 18px; color: #1f2937; }
-					h3 { margin: 12px 0 10px; font-size: 16px; color: #111827; }
-					.header { margin-bottom: 16px; }
-					.meta { color: #4b5563; font-size: 14px; }
-					.question { border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; margin-bottom: 14px; background: #f9fafb; }
-					.media { margin: 10px 0; }
-					.media img { max-width: 100%; max-height: 320px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 8px; }
-					.answers { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-					.answer { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; min-height: 38px; }
-					.answer.correct { border-color: #16a34a; background: #ecfdf3; }
-					.badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 9999px; background: #10b981; color: #fff; font-weight: 700; font-size: 12px; }
-					.tag { margin-left: auto; font-size: 11px; font-weight: 700; color: #0f5132; background: #d1fae5; padding: 4px 8px; border-radius: 9999px; }
-					.checkbox { margin-left: auto; width: 16px; height: 16px; border: 1px solid #9ca3af; border-radius: 3px; display: inline-flex; }
-					.answer-img img { max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 6px; border: 1px solid #e5e7eb; }
-					.info { color: #4b5563; font-size: 13px; margin-top: 4px; }
-				</style>
-			</head>
-			<body>
-				<div class="header">
-					<h1>${test.title || ''}${showKey ? '' : ' — wersja do wypełnienia'}</h1>
-					${test.description ? `<div class="meta">${test.description}</div>` : ''}
-					${showKey ? '' : `<div class="info">Wersja do wydruku dla ucznia – bez oznaczonych poprawnych odpowiedzi.</div>`}
-				</div>
-				${questionHtml}
-			</body>
-			</html>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="UTF-8" />
+	<title>${test.title || 'Test'}${showKey ? '' : ' - do wypełnienia'}</title>
+	<style>
+		* { box-sizing: border-box; }
+		body { font-family: "Inter", "Segoe UI", Arial, sans-serif; margin: 0; padding: 32px 28px; color: #0f172a; background: #ffffff; }
+		.page { max-width: 960px; margin: 0 auto; }
+		h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.01em; }
+		h3 { margin: 0 0 10px; font-size: 17px; color: #0f172a; }
+		.meta { color: #475569; font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+		.badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 700; font-size: 13px; }
+		.tag { margin-left: auto; font-size: 11px; font-weight: 700; color: #0f5132; background: #d1fae5; padding: 4px 8px; border-radius: 9999px; border: 1px solid #bbf7d0; }
+		.checkbox { margin-left: auto; width: 16px; height: 16px; border: 1px solid #cbd5e1; border-radius: 4px; display: inline-flex; }
+		.header { padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 16px; margin-bottom: 18px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 60%); }
+		.question { border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; margin-bottom: 14px; background: #f8fafc; page-break-inside: avoid; }
+		.question + .question { margin-top: 16px; }
+		.question-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+		.answers { display: flex; flex-direction: column; gap: 8px; }
+		.answer { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; min-height: 40px; }
+		.answer.correct { border-color: #16a34a; background: #ecfdf3; }
+		.answer-img img { max-height: 160px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #e2e8f0; }
+		.media { margin: 10px 0 6px; }
+		.media img { max-width: 100%; max-height: 320px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 12px; }
+		.info { color: #475569; font-size: 13px; margin-top: 6px; }
+		.footer { margin-top: 18px; font-size: 12px; color: #94a3b8; text-align: right; }
+		@media print {
+			body { padding: 24px; background: #fff; }
+			.header { box-shadow: none; }
+			.answer, .question, .header { break-inside: avoid; }
+		}
+	</style>
+</head>
+<body>
+	<div class="page">
+		<div class="header">
+			<h1>${test.title || ''}${showKey ? '' : ' — wersja do wypełnienia'}</h1>
+			${test.description ? `<div class="meta">${test.description}</div>` : ''}
+			${showKey ? '' : `<div class="info">Wersja do wydruku dla ucznia – bez oznaczonych poprawnych odpowiedzi.</div>`}
+		</div>
+		${questionHtml}
+		<div class="footer">Wygenerowano z ZSTiB Testy</div>
+	</div>
+</body>
+</html>
 		`)
 
 		printable.document.close()
@@ -182,8 +193,8 @@ export default function TestDetail({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-white">
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+		<div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-white">
+			<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 				{showTestModal && (
 					<CreateTestModal
 						isOpen={showTestModal}
@@ -205,26 +216,43 @@ export default function TestDetail({ addToast }) {
 				/>
 
 				{/* Actions */}
-				<div className="bg-white rounded-xl shadow-md p-4 sm:p-5 mb-6 border border-gray-100">
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+					<div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-4">
+						<p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Pytania</p>
+						<p className="text-3xl font-bold text-slate-900 mt-1">{questions.length}</p>
+						<p className="text-sm text-slate-500 mt-1">Przygotowane w tym teście</p>
+					</div>
+					<div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-4">
+						<p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Odpowiedzi</p>
+						<p className="text-3xl font-bold text-slate-900 mt-1">{answers.length}</p>
+						<p className="text-sm text-slate-500 mt-1">Zebrane od uczestników</p>
+					</div>
+					<div className="rounded-2xl bg-linear-to-br from-slate-900 to-slate-700 text-white shadow-lg p-4">
+						<p className="text-xs uppercase tracking-wide font-semibold text-slate-200">Tryb</p>
+						<p className="text-2xl font-bold mt-1">{test.singleChoice ? 'Jednokrotny wybór' : 'Wielokrotny wybór'}</p>
+					</div>
+				</div>
+
+				<div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 border border-slate-200">
 					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 						<div className="space-y-1">
-							<p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Akcje</p>
-							<p className="text-sm text-gray-600">Zarządzaj pytaniami i pobierz wersje testu.</p>
+							<p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Akcje</p>
+							<p className="text-sm text-slate-600">Zarządzaj pytaniami, udostępnij test lub pobierz wersję PDF.</p>
 						</div>
 						<div className="flex flex-wrap gap-2">
 							<button
 								onClick={openForm}
-								className="inline-flex items-center gap-2 px-3 py-2.5 bg-black hover:bg-neutral-800 text-white font-semibold rounded-lg shadow transition">
+								className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-sm transition">
 								<span>＋</span> Dodaj pytanie
 							</button>
 							<button
 								onClick={() => generatePdf('key')}
-								className="inline-flex items-center gap-2 px-3 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold rounded-lg shadow transition">
+								className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-400 text-slate-900 font-semibold rounded-lg shadow-sm transition">
 								📄 PDF z kluczem
 							</button>
 							<button
 								onClick={() => generatePdf('blank')}
-								className="inline-flex items-center gap-2 px-3 py-2.5 bg-neutral-700 hover:bg-neutral-800 text-white font-semibold rounded-lg shadow transition">
+								className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-lg shadow-sm transition">
 								📝 PDF do wypełnienia
 							</button>
 						</div>
@@ -253,17 +281,17 @@ export default function TestDetail({ addToast }) {
 					addToast={addToast}
 				/>
 
-				<div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 border-l-4 border-black">
+				<div className="bg-white rounded-2xl shadow-lg p-5 sm:p-7 mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 border border-slate-200">
 					<div className="flex-1">
-						<p className="text-sm text-gray-600 uppercase tracking-wide font-semibold">Analiza wyników</p>
-						<h3 className="text-lg sm:text-xl font-bold text-gray-800 mt-1">Zobacz podsumowanie testu</h3>
-						<p className="text-sm text-gray-600 mt-1">
-							Przejdź do strony z wykresami i statystykami, aby przeanalizować wyniki uczniów.
+						<p className="text-sm text-slate-600 uppercase tracking-wide font-semibold">Analiza wyników</p>
+						<h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">Zobacz podsumowanie testu</h3>
+						<p className="text-sm text-slate-600 mt-1">
+							Przejdź do panelu z wykresami i statystykami, aby przeanalizować wyniki uczestników.
 						</p>
 					</div>
 					<button
 						onClick={goToResults}
-						className="w-full sm:w-auto px-4 py-2.5 bg-black hover:bg-neutral-800 text-white font-semibold rounded-lg shadow transition">
+						className="w-full sm:w-auto px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-sm transition">
 						Wyniki ogólne
 					</button>
 				</div>

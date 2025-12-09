@@ -56,6 +56,28 @@ export default function TestResults({ addToast }) {
 		window.print()
 	}
 
+	const printStyles = `
+		@media print {
+			body {
+				background: #ffffff !important;
+				color: #0f172a;
+			}
+			nav, .print-hide {
+				display: none !important;
+			}
+			.print-container {
+				max-width: 100% !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+			.card-print {
+				border: 1px solid #d4d4d8 !important;
+				box-shadow: none !important;
+				page-break-inside: avoid;
+			}
+		}
+	`
+
 	const stats = useMemo(() => {
 		if (!answers.length) {
 			return {
@@ -157,48 +179,48 @@ export default function TestResults({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-white">
-			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-					<button
-						onClick={() => navigate(`/test/${testId}`)}
-						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 text-neutral-800 rounded-lg text-sm font-semibold transition">
-						<span>←</span> Powrót do testu
-					</button>
-					<button
-						onClick={refetch}
-						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 rounded-lg text-sm font-semibold text-neutral-800 transition">
-						⟳ Odśwież wyniki
-					</button>
-					<button
-						onClick={handlePrint}
-						disabled={loadingAnswers}
-						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg text-sm font-semibold text-neutral-800 transition">
-						🖨 Drukuj PDF
-					</button>
-				</div>
-
-				<div className="bg-white rounded-xl shadow-md p-5 sm:p-7 mb-6 border border-gray-100">
+		<div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-white">
+			<style>{printStyles}</style>
+			<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8 print-container">
+				<div className="bg-white border border-slate-200 shadow-md rounded-2xl p-4 sm:p-5 flex flex-col gap-4 card-print">
 					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 						<div>
-							<p className="text-xs uppercase tracking-wide text-gray-500">Wyniki ogólne</p>
-							<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{test.title}</h1>
-							{test.description && <p className="text-gray-600 mt-1">{test.description}</p>}
+							<p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Wyniki ogólne</p>
+							<h1 className="text-2xl sm:text-3xl font-bold text-slate-900">{test.title}</h1>
+							{test.description && <p className="text-slate-600 mt-1">{test.description}</p>}
 						</div>
-						<div className="flex gap-2 flex-wrap">
-							<span className="px-3 py-1 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200">
+						<div className="flex flex-wrap gap-2">
+							<span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-900 border border-slate-200">
 								Odpowiedzi: {answers.length}
 							</span>
 							{test.singleChoice && (
-								<span className="px-3 py-1 rounded-full text-xs font-semibold bg-black text-white border border-black">
+								<span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 text-white border border-slate-900">
 									Jednokrotny wybór
 								</span>
 							)}
 						</div>
 					</div>
+					<div className="flex flex-wrap gap-2 print-hide">
+						<button
+							onClick={() => navigate(`/test/${testId}`)}
+							className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-slate-400 text-slate-800 rounded-lg text-sm font-semibold transition">
+							<span>←</span> Powrót do testu
+						</button>
+						<button
+							onClick={refetch}
+							className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-slate-400 rounded-lg text-sm font-semibold text-slate-800 transition">
+							⟳ Odśwież wyniki
+						</button>
+						<button
+							onClick={handlePrint}
+							disabled={loadingAnswers}
+							className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition shadow-sm">
+							🖨 Drukuj PDF
+						</button>
+					</div>
 				</div>
 
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 card-print">
 					<StatCard
 						title="Średni wynik"
 						value={`${stats.avgPercent.toFixed(1)}%`}
@@ -212,26 +234,26 @@ export default function TestResults({ addToast }) {
 					/>
 				</div>
 
-				<div className="bg-white rounded-xl shadow-md p-5 sm:p-7 mb-6 border border-gray-100">
+				<div className="bg-white rounded-2xl shadow-lg p-5 sm:p-7 border border-slate-200 card-print">
 					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-xl sm:text-2xl font-bold text-gray-900">Rozkład wyników</h2>
-						<span className="text-xs text-gray-500">({answers.length} odpowiedzi)</span>
+						<h2 className="text-xl sm:text-2xl font-bold text-slate-900">Rozkład wyników</h2>
+						<span className="text-xs text-slate-500">({answers.length} odpowiedzi)</span>
 					</div>
 					{loadingAnswers ? (
-						<p className="text-gray-600 text-sm">Wczytywanie wyników...</p>
+						<p className="text-slate-600 text-sm">Wczytywanie wyników...</p>
 					) : answers.length === 0 ? (
-						<p className="text-gray-500 text-sm italic">Brak odpowiedzi dla tego testu.</p>
+						<p className="text-slate-500 text-sm italic">Brak odpowiedzi dla tego testu.</p>
 					) : (
 						<div className="space-y-3">
 							{distribution.counts.map(bucket => {
 								const width = `${(bucket.count / distribution.max) * 100}%`
 								return (
 									<div key={bucket.label} className="flex items-center gap-3">
-										<span className="w-20 text-xs font-semibold text-gray-700">{bucket.label}</span>
-										<div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
-											<div className="h-full bg-linear-to-r from-neutral-400 to-neutral-900" style={{ width }} />
+										<span className="w-20 text-xs font-semibold text-slate-700">{bucket.label}</span>
+										<div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+											<div className="h-full bg-linear-to-r from-slate-400 to-slate-900" style={{ width }} />
 										</div>
-										<span className="text-xs text-gray-600 min-w-[48px] text-right">{bucket.count} os.</span>
+										<span className="text-xs text-slate-600 min-w-[48px] text-right">{bucket.count} os.</span>
 									</div>
 								)
 							})}
@@ -239,34 +261,32 @@ export default function TestResults({ addToast }) {
 					)}
 				</div>
 
-				<div className="bg-white rounded-xl shadow-md p-5 sm:p-7 border border-gray-100">
+				<div className="bg-white rounded-2xl shadow-lg p-5 sm:p-7 border border-slate-200 card-print">
 					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-xl sm:text-2xl font-bold text-gray-900">Skuteczność pytań</h2>
-						<span className="text-xs text-gray-500">Odsetek poprawnych odpowiedzi</span>
+						<h2 className="text-xl sm:text-2xl font-bold text-slate-900">Skuteczność pytań</h2>
+						<span className="text-xs text-slate-500">Odsetek poprawnych odpowiedzi</span>
 					</div>
 					{loadingAnswers ? (
-						<p className="text-gray-600 text-sm">Wczytywanie...</p>
+						<p className="text-slate-600 text-sm">Wczytywanie...</p>
 					) : questionStats.length === 0 ? (
-						<p className="text-gray-500 text-sm italic">Brak danych do wyświetlenia.</p>
+						<p className="text-slate-500 text-sm italic">Brak danych do wyświetlenia.</p>
 					) : (
 						<div className="space-y-4">
 							{questionStats.map(q => (
 								<div key={q.id}>
-									<p className="text-sm font-semibold text-gray-800 mb-1">{q.title}</p>
+									<p className="text-sm font-semibold text-slate-800 mb-1">{q.title}</p>
 									<div className="flex items-center gap-3">
-										<div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
+										<div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
 											<div
 												className={`h-full rounded-full ${
-																q.percent >= 70
-																	? 'bg-neutral-900'
-																	: q.percent >= 40
-																	? 'bg-neutral-600'
-																	: 'bg-neutral-400'
+													q.percent >= 70 ? 'bg-slate-900' : q.percent >= 40 ? 'bg-slate-600' : 'bg-slate-400'
 												}`}
 												style={{ width: `${q.percent}%` }}
 											/>
 										</div>
-										<span className="text-xs font-semibold text-gray-700 w-14 text-right">{q.percent.toFixed(1)}%</span>
+										<span className="text-xs font-semibold text-slate-700 w-14 text-right">
+											{q.percent.toFixed(1)}%
+										</span>
 									</div>
 								</div>
 							))}
@@ -274,20 +294,20 @@ export default function TestResults({ addToast }) {
 					)}
 				</div>
 
-				<div className="bg-white rounded-xl shadow-md p-5 sm:p-7 border border-gray-100 mt-6">
+				<div className="bg-white rounded-2xl shadow-lg p-5 sm:p-7 border border-slate-200 card-print">
 					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-xl sm:text-2xl font-bold text-gray-900">Rozkład odpowiedzi na pytania</h2>
-						<span className="text-xs text-gray-500">Jak często wybierano poszczególne opcje</span>
+						<h2 className="text-xl sm:text-2xl font-bold text-slate-900">Rozkład odpowiedzi na pytania</h2>
+						<span className="text-xs text-slate-500">Jak często wybierano poszczególne opcje</span>
 					</div>
 					{loadingAnswers ? (
-						<p className="text-gray-600 text-sm">Wczytywanie...</p>
+						<p className="text-slate-600 text-sm">Wczytywanie...</p>
 					) : questionStats.length === 0 ? (
-						<p className="text-gray-500 text-sm italic">Brak danych do wyświetlenia.</p>
+						<p className="text-slate-500 text-sm italic">Brak danych do wyświetlenia.</p>
 					) : (
 						<div className="space-y-6">
 							{questionStats.map(q => (
-								<div key={q.id} className="border rounded-lg p-4 bg-gray-50/80">
-									<p className="text-sm font-semibold text-gray-800 mb-3">{q.title}</p>
+								<div key={q.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50/70 shadow-sm">
+									<p className="text-sm font-semibold text-slate-800 mb-3">{q.title}</p>
 
 									{(() => {
 										const img = q.media.find(m => m.type === 'image' && m.url)
@@ -298,14 +318,14 @@ export default function TestResults({ addToast }) {
 													<img
 														src={img.url}
 														alt="Obraz do pytania"
-														className="w-full max-h-64 object-contain rounded border border-gray-200 bg-white"
+														className="w-full max-h-64 object-contain rounded border border-slate-200 bg-white"
 													/>
 												</div>
 											)
 										}
 										if (yt) {
 											return (
-												<div className="mb-3 aspect-video w-full rounded border border-gray-200 overflow-hidden bg-black">
+												<div className="mb-3 aspect-video w-full rounded border border-slate-200 overflow-hidden bg-black">
 													<iframe
 														title={`Wideo do pytania`}
 														src={getYouTubeEmbedUrl(yt.url)}
@@ -329,21 +349,21 @@ export default function TestResults({ addToast }) {
 											const isImage = ans.type === 'image'
 											const isCorrect = q.correctAnswers.includes(idx)
 											const barClass = isCorrect
-												? 'bg-linear-to-r from-neutral-600 to-neutral-900'
-												: 'bg-linear-to-r from-slate-200 to-slate-400'
-											const textClass = isCorrect ? 'text-neutral-900' : 'text-gray-800'
+												? 'bg-gradient-to-r from-slate-600 to-slate-900'
+												: 'bg-gradient-to-r from-slate-200 to-slate-400'
+											const textClass = isCorrect ? 'text-slate-900' : 'text-slate-800'
 											return (
 												<div key={idx}>
-													<div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+													<div className="flex items-center justify-between text-xs text-slate-600 mb-1">
 														<span className={`font-semibold ${textClass}`}>
 															{label}. {isImage ? 'Obraz' : ans.content?.slice(0, 60) || '—'}
-															{isCorrect && <span className="ml-2 text-[11px] font-bold text-neutral-900">POPRAWNA</span>}
+															{isCorrect && <span className="ml-2 text-[11px] font-bold text-slate-900">POPRAWNA</span>}
 														</span>
-														<span className="text-gray-700 font-semibold">
+														<span className="text-slate-700 font-semibold">
 															{percent.toFixed(1)}% ({count})
 														</span>
 													</div>
-													<div className="h-3 bg-white rounded-full overflow-hidden border border-gray-200">
+													<div className="h-3 bg-white rounded-full overflow-hidden border border-slate-200">
 														<div className={`h-full ${barClass}`} style={{ width: `${barWidth}%` }} />
 													</div>
 													{isImage && ans.content && (
@@ -351,7 +371,7 @@ export default function TestResults({ addToast }) {
 															<img
 																src={ans.content}
 																alt={`Odpowiedź ${label}`}
-																className="max-h-32 rounded border border-gray-200 bg-white object-contain"
+																className="max-h-32 rounded border border-slate-200 bg-white object-contain"
 															/>
 														</div>
 													)}
