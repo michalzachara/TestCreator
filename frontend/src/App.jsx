@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
 import TestDetail from './pages/TestDetail'
+import TestResults from './pages/TestResults'
 import AnswerDetail from './pages/AnswerDetail'
 import PublicTest from './pages/PublicTest'
 import Landing from './pages/Landing'
@@ -60,6 +61,15 @@ function App() {
 							<ProtectedRoute>
 								<Navbar />
 								<TestDetail addToast={addToast} />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/test/:testId/results"
+						element={
+							<ProtectedRoute>
+								<Navbar />
+								<TestResults addToast={addToast} />
 							</ProtectedRoute>
 						}
 					/>

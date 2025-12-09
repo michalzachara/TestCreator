@@ -59,6 +59,10 @@ export default function TestDetail({ addToast }) {
 		addToast('Link testu skopiowany do schowka!', 'success')
 	}
 
+	const goToResults = () => {
+		navigate(`/test/${testId}/results`)
+	}
+
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -126,6 +130,21 @@ export default function TestDetail({ addToast }) {
 					onDeleteQuestion={handleQuestionDeleted}
 					addToast={addToast}
 				/>
+
+				<div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 border-l-4 border-green-500">
+					<div className="flex-1">
+						<p className="text-sm text-gray-600 uppercase tracking-wide font-semibold">Analiza wyników</p>
+						<h3 className="text-lg sm:text-xl font-bold text-gray-800 mt-1">Zobacz podsumowanie testu</h3>
+						<p className="text-sm text-gray-600 mt-1">
+							Przejdź do strony z wykresami i statystykami, aby przeanalizować wyniki uczniów.
+						</p>
+					</div>
+					<button
+						onClick={goToResults}
+						className="w-full sm:w-auto px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow transition">
+						Wyniki ogólne
+					</button>
+				</div>
 
 				{/* Answers Summary */}
 				<TestAnswersSummary
