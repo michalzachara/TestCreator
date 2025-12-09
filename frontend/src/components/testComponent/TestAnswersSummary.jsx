@@ -25,7 +25,7 @@ export default function TestAnswersSummary({
 									setAnswersPage(1)
 								}}
 								placeholder="Imię, nazwisko lub klasa"
-								className="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+								className="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-800"
 							/>
 						</div>
 						<div className="flex items-center gap-2 text-sm">
@@ -36,7 +36,7 @@ export default function TestAnswersSummary({
 									setAnswersSortBy(e.target.value)
 									setAnswersPage(1)
 								}}
-								className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+								className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-800">
 								<option value="submitted_desc">Najnowsze</option>
 								<option value="name_asc">Imię A-Z</option>
 								<option value="surname_asc">Nazwisko A-Z</option>
@@ -114,7 +114,7 @@ export default function TestAnswersSummary({
 										<div className="flex flex-col items-end gap-1">
 											<span
 												className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-													isGood ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+													isGood ? 'bg-black text-white' : 'bg-red-100 text-red-700'
 												}`}>
 												{percent}%
 											</span>

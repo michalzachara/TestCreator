@@ -11,14 +11,14 @@ export default function AnswerDetail({ addToast }) {
 
 	if (loading || !data) {
 		return (
-			<div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+			<div className="min-h-screen bg-white flex items-center justify-center px-4">
 				<p className="text-gray-600 text-lg text-center">Wczytywanie szczegółów odpowiedzi...</p>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-white">
 			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
 				<AnswerHeader data={data} onBack={() => navigate(-1)} />
 

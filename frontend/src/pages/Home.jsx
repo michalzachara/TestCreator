@@ -33,13 +33,13 @@ export default function Home({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-white">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-					<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">Moje testy</h1>
+					<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 tracking-tight">Moje testy</h1>
 					<button
 						onClick={openModal}
-						className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition duration-200 shadow-lg text-sm sm:text-base">
+						className="w-full sm:w-auto bg-black hover:bg-neutral-800 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-full transition duration-200 shadow-md text-sm sm:text-base">
 						+ Utwórz test
 					</button>
 				</div>

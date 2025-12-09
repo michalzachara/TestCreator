@@ -54,23 +54,23 @@ export default function QuestionCard({ question, index, onEdit, onDelete, addToa
 	}
 
 	return (
-		<div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border-l-4 border-green-500">
+		<div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border-l-4 border-black">
 			<div className="p-4 sm:p-6">
 				{/* Question Header */}
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
 					<h3 className="text-lg sm:text-xl font-bold text-gray-800">
-						<span className="text-green-600">Q{index}.</span> {question.title}
+						<span className="text-neutral-900">Q{index}.</span> {question.title}
 					</h3>
 					<div className="flex gap-2 w-full sm:w-auto">
 						<button
 							onClick={() => onEdit(question)}
-							className="flex-1 sm:flex-none px-3 py-2 bg-green-50 hover:bg-green-100 text-green-700 font-semibold text-sm rounded-lg transition duration-200 border border-green-200">
+							className="flex-1 sm:flex-none px-3 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-sm rounded-lg transition duration-200 border border-neutral-200">
 							✏️ Edytuj
 						</button>
 						<button
 							onClick={() => setConfirming(true)}
 							disabled={deleting}
-							className="flex-1 sm:flex-none px-3 py-2 bg-red-50 hover:bg-red-100 disabled:bg-gray-100 text-red-700 disabled:text-gray-500 font-semibold text-sm rounded-lg transition duration-200 border border-red-200">
+							className="flex-1 sm:flex-none px-3 py-2 bg-red-50 hover:bg-red-100 disabled:bg-neutral-100 text-red-700 disabled:text-gray-500 font-semibold text-sm rounded-lg transition duration-200 border border-red-200">
 							🗑️ Usuń
 						</button>
 					</div>
@@ -146,11 +146,11 @@ export default function QuestionCard({ question, index, onEdit, onDelete, addToa
 								return (
 									<div
 										key={idx}
-										className={`p-3 rounded-lg border-2 text-sm ${
-											isCorrect
-												? 'bg-green-50 border-green-300 text-green-800'
+									className={`p-3 rounded-lg border-2 text-sm ${
+										isCorrect
+											? 'bg-neutral-900 border-neutral-900 text-white'
 												: 'bg-gray-50 border-gray-300 text-gray-700'
-										}`}>
+									}`}>
 										<div className="flex items-center gap-2">
 											{isCorrect && <span className="text-lg">✓</span>}
 											{isImage ? (
@@ -162,7 +162,7 @@ export default function QuestionCard({ question, index, onEdit, onDelete, addToa
 											) : (
 												<span>{answer.content || answer}</span>
 											)}
-											{isCorrect && <span className="ml-auto text-xs font-bold text-green-700">POPRAWNA</span>}
+											{isCorrect && <span className="ml-auto text-xs font-bold text-white">POPRAWNA</span>}
 										</div>
 									</div>
 								)

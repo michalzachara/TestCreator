@@ -24,7 +24,7 @@ export default function PublicTestUserForm({ formData, fieldErrors, onChange }) 
 						value={formData.name}
 						onChange={onChange}
 						className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-							fieldErrors.name ? 'border-red-400 focus:ring-red-500' : 'border-gray-300 focus:ring-green-500'
+							fieldErrors.name ? 'border-red-400 focus:ring-red-500' : 'border-neutral-300 focus:ring-neutral-800'
 						}`}
 						placeholder="Wpisz swoje imię"
 					/>
@@ -38,7 +38,7 @@ export default function PublicTestUserForm({ formData, fieldErrors, onChange }) 
 						value={formData.surname}
 						onChange={onChange}
 						className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-							fieldErrors.surname ? 'border-red-400 focus:ring-red-500' : 'border-gray-300 focus:ring-green-500'
+							fieldErrors.surname ? 'border-red-400 focus:ring-red-500' : 'border-neutral-300 focus:ring-neutral-800'
 						}`}
 						placeholder="Wpisz swoje nazwisko"
 					/>
@@ -55,8 +55,8 @@ export default function PublicTestUserForm({ formData, fieldErrors, onChange }) 
 								fieldErrors.classType
 									? 'border-red-400 focus:ring-red-500 hover:border-red-500 focus:shadow-red-200'
 									: formData.classType
-									? 'border-green-300 focus:ring-green-500 hover:border-green-400 focus:shadow-green-200'
-									: 'border-gray-300 focus:ring-green-500 hover:border-green-400 focus:shadow-green-200'
+									? 'border-neutral-900 focus:ring-neutral-800 hover:border-neutral-900 focus:shadow-neutral-200'
+									: 'border-neutral-300 focus:ring-neutral-800 hover:border-neutral-500 focus:shadow-neutral-200'
 							} ${!formData.classType ? 'text-gray-400' : 'text-gray-800'}`}>
 							<option value="" disabled className="text-gray-400 italic">
 								Wybierz klasę
@@ -77,7 +77,7 @@ export default function PublicTestUserForm({ formData, fieldErrors, onChange }) 
 						</select>
 						<div
 							className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-200 ${
-								fieldErrors.classType ? 'text-red-500' : formData.classType ? 'text-green-600' : 'text-gray-500'
+								fieldErrors.classType ? 'text-red-500' : formData.classType ? 'text-neutral-900' : 'text-gray-500'
 							}`}>
 							<svg
 								className="w-5 h-5"

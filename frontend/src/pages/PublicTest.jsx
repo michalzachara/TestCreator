@@ -48,7 +48,7 @@ export default function PublicTest({ addToast }) {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
+			<div className="min-h-screen bg-white flex items-center justify-center">
 				<p className="text-gray-600 text-lg">Loading test...</p>
 			</div>
 		)
@@ -56,7 +56,7 @@ export default function PublicTest({ addToast }) {
 
 	if (!test) {
 		return (
-			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
+			<div className="min-h-screen bg-white flex items-center justify-center">
 				<p className="text-gray-600 text-lg">Test not found</p>
 			</div>
 		)
@@ -64,7 +64,7 @@ export default function PublicTest({ addToast }) {
 
 	if (alreadySubmitted && !submitted) {
 		return (
-			<div className="min-h-screen bg-gray-100">
+			<div className="min-h-screen bg-white">
 				<Navbar hideAuthActions />
 				<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 					<div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center">
@@ -83,7 +83,7 @@ export default function PublicTest({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-white">
 			<Navbar hideAuthActions />
 			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 				<PublicTestHeader test={test} />
@@ -110,7 +110,7 @@ export default function PublicTest({ addToast }) {
 					{/* Submit Button */}
 					<button
 						type="submit"
-						className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-lg">
+						className="w-full bg-black hover:bg-neutral-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-lg">
 						Wyślij test
 					</button>
 				</form>

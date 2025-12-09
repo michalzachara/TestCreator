@@ -6,11 +6,11 @@ export default function AnswerQuestionCard({ q, index }) {
 	return (
 		<div
 			className={`border-2 rounded-xl p-4 sm:p-5 ${
-				isQuestionCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+				isQuestionCorrect ? 'border-neutral-900 bg-neutral-50' : 'border-red-200 bg-red-50'
 			}`}>
 			{/* Nagłówek pytania */}
 			<div className="flex items-start gap-3 mb-4">
-				<div className={`text-2xl ${isQuestionCorrect ? 'text-green-600' : 'text-red-600'}`}>
+				<div className={`text-2xl ${isQuestionCorrect ? 'text-neutral-900' : 'text-red-600'}`}>
 					{isQuestionCorrect ? '✓' : '✗'}
 				</div>
 
@@ -52,7 +52,7 @@ export default function AnswerQuestionCard({ q, index }) {
 						<div
 							key={aIdx}
 							className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-3 rounded-lg border text-sm 
-													${isCorrect ? 'border-green-300 bg-green-100/60' : 'border-gray-200 bg-gray-50'}`}>
+													${isCorrect ? 'border-neutral-900 bg-neutral-50' : 'border-gray-200 bg-gray-50'}`}>
 							<div className="flex items-start gap-2 flex-1">
 								<span className="font-semibold text-gray-700">{String.fromCharCode(65 + aIdx)}.</span>
 								{isImage ? (
@@ -67,8 +67,8 @@ export default function AnswerQuestionCard({ q, index }) {
 							</div>
 
 							<div className="flex gap-2 flex-wrap sm:justify-end">
-								{isCorrect && <span className="text-xs font-bold text-green-700">POPRAWNA</span>}
-								{isSelected && <span className="text-xs font-semibold text-blue-700">ZAZNACZONA</span>}
+								{isCorrect && <span className="text-xs font-bold text-neutral-900">POPRAWNA</span>}
+								{isSelected && <span className="text-xs font-semibold text-neutral-700">ZAZNACZONA</span>}
 							</div>
 						</div>
 					)

@@ -11,10 +11,10 @@ export default function Login({ addToast }) {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+		<div className="min-h-screen bg-white flex items-center justify-center p-4">
 			<div className="w-full max-w-md">
-				<div className="bg-white rounded-lg shadow-2xl p-8">
-					<h1 className="text-3xl font-bold text-center text-green-600 mb-8">Logowanie</h1>
+				<div className="bg-white rounded-2xl shadow-xl border border-neutral-200 p-8">
+					<h1 className="text-3xl font-bold text-center text-neutral-900 mb-8 tracking-tight">Logowanie</h1>
 
 					{error && <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">{error}</div>}
 
@@ -29,7 +29,7 @@ export default function Login({ addToast }) {
 								value={email}
 								onChange={e => setEmail(e.target.value)}
 								required
-								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+								className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800"
 								placeholder="twoj@email.com"
 							/>
 						</div>
@@ -44,7 +44,7 @@ export default function Login({ addToast }) {
 								value={password}
 								onChange={e => setPassword(e.target.value)}
 								required
-								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+								className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800"
 								placeholder="••••••••"
 							/>
 						</div>
@@ -52,7 +52,7 @@ export default function Login({ addToast }) {
 						<button
 							type="submit"
 							disabled={loading}
-							className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-2 rounded-lg transition duration-200">
+							className="w-full bg-black hover:bg-neutral-800 disabled:bg-neutral-300 text-white font-semibold py-2 rounded-lg transition duration-200">
 							{loading ? 'Logowanie...' : 'Logowanie'}
 						</button>
 					</form>

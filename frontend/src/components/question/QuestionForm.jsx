@@ -70,8 +70,8 @@ export default function QuestionForm({
 	if (!isOpen) return null
 
 	return (
-		<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-			<div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-4 sm:p-6 lg:p-8 my-8">
+		<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 py-6 overflow-hidden">
+			<div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-4 sm:p-6 lg:p-8 my-8 max-h-[90vh] overflow-y-auto">
 				{/* Header */}
 				<div className="flex justify-between items-center mb-6">
 					<h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
@@ -90,7 +90,7 @@ export default function QuestionForm({
 						<textarea
 							value={content}
 							onChange={e => setContent(e.target.value)}
-							className="w-full px-4 py-3 text-lg border-b-2 border-gray-300 focus:border-green-500 focus:outline-none bg-gray-50 resize-none"
+							className="w-full px-4 py-3 text-lg border-b-2 border-gray-300 focus:border-neutral-900 focus:outline-none bg-gray-50 resize-none"
 							placeholder="Wpisz swoje pytanie tutaj"
 							rows="2"
 							maxLength={500}
@@ -106,7 +106,7 @@ export default function QuestionForm({
 							<select
 								value={mediaType}
 								onChange={e => handleMediaTypeChange(e.target.value)}
-								className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-green-500">
+								className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-neutral-800">
 								<option value="none">Brak</option>
 								<option value="image">Obraz</option>
 								<option value="youtube">YouTube</option>
@@ -138,7 +138,7 @@ export default function QuestionForm({
 									value={youtubeUrl}
 									onChange={e => setYoutubeUrl(e.target.value)}
 									placeholder="Wklej link do YouTube (np. https://www.youtube.com/watch?v=...)"
-									className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+									className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-neutral-800 text-sm"
 								/>
 								{youtubeUrl.trim() && (
 									<div className="aspect-video w-full rounded border border-gray-200 overflow-hidden bg-black">
@@ -159,10 +159,10 @@ export default function QuestionForm({
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<p className="text-sm font-semibold text-gray-700">Odpowiedzi</p>
-							{isSingleChoice && <span className="text-xs font-semibold text-green-700">Jedna poprawna</span>}
+							{isSingleChoice && <span className="text-xs font-semibold text-neutral-800">Jedna poprawna</span>}
 						</div>
 						{answers.map((answer, index) => (
-							<div key={index} className="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+							<div key={index} className="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg hover:bg-neutral-100 transition">
 								<div className="flex items-start gap-3">
 									{/* Checkbox for marking correct answer */}
 									<div className="shrink-0 pt-1">
@@ -171,7 +171,7 @@ export default function QuestionForm({
 											name={isSingleChoice ? 'singleCorrectAnswer' : `answer-${index}`}
 											checked={answer.isCorrect}
 											onChange={e => handleAnswerChange(index, 'isCorrect', e.target.checked)}
-											className="w-5 h-5 text-green-600 rounded cursor-pointer"
+											className="w-5 h-5 text-neutral-900 rounded cursor-pointer"
 										/>
 									</div>
 
@@ -182,7 +182,7 @@ export default function QuestionForm({
 											<select
 												value={answer.type || 'text'}
 												onChange={e => handleAnswerChange(index, 'type', e.target.value)}
-												className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-500">
+												className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-neutral-800">
 												<option value="text">Tekst</option>
 												<option value="image">Obraz</option>
 											</select>
@@ -194,7 +194,7 @@ export default function QuestionForm({
 												type="text"
 												value={answer.text}
 												onChange={e => handleAnswerChange(index, 'text', e.target.value)}
-												className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+												className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-neutral-800 text-sm"
 												placeholder={`Opcja ${String.fromCharCode(65 + index)}`}
 												maxLength={200}
 											/>
@@ -234,7 +234,7 @@ export default function QuestionForm({
 						<button
 							type="button"
 							onClick={addAnswer}
-							className="w-full py-3 text-green-600 hover:bg-green-50 rounded-lg font-semibold transition border-2 border-dashed border-green-300">
+							className="w-full py-3 text-neutral-900 hover:bg-neutral-100 rounded-lg font-semibold transition border-2 border-dashed border-neutral-300">
 							+ Dodaj odpowiedź
 						</button>
 					</div>
@@ -244,13 +244,13 @@ export default function QuestionForm({
 						<button
 							type="button"
 							onClick={onClose}
-							className="px-6 py-2.5 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold transition">
+							className="px-6 py-2.5 text-gray-700 bg-white border border-neutral-300 hover:border-neutral-500 rounded-lg font-semibold transition">
 							Anuluj
 						</button>
 						<button
 							type="submit"
 							disabled={loading}
-							className="px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition">
+							className="px-6 py-2.5 bg-black hover:bg-neutral-800 disabled:bg-neutral-300 text-white font-semibold rounded-lg transition">
 							{loading ? 'Zapisywanie...' : editingQuestion ? 'Zaktualizuj' : 'Zapisz'}
 						</button>
 					</div>

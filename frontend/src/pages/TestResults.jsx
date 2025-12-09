@@ -51,6 +51,11 @@ export default function TestResults({ addToast }) {
 	const { test, loading: loadingTest } = useTestDetail(testId, addToast)
 	const { answers, loadingAnswers, refetch } = useTestAnswers(testId, addToast)
 
+	const handlePrint = () => {
+		// Użyj dialogu drukowania przeglądarki, aby zapisać stronę jako PDF
+		window.print()
+	}
+
 	const stats = useMemo(() => {
 		if (!answers.length) {
 			return {
@@ -130,13 +135,14 @@ export default function TestResults({ addToast }) {
 				answers: q.answers || [],
 				correctAnswers: q.correctAnswers || [],
 				media: q.media || [],
+				attempted,
 			}
 		})
 	}, [test, answers])
 
 	if (loadingTest) {
 		return (
-			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
+			<div className="min-h-screen bg-white flex items-center justify-center">
 				<p className="text-gray-600 text-lg">Wczytywanie testu...</p>
 			</div>
 		)
@@ -144,25 +150,31 @@ export default function TestResults({ addToast }) {
 
 	if (!test) {
 		return (
-			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
+			<div className="min-h-screen bg-white flex items-center justify-center">
 				<p className="text-gray-600 text-lg">Test nie znaleziony</p>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-white">
 			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
 				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
 					<button
 						onClick={() => navigate(`/test/${testId}`)}
-						className="inline-flex items-center gap-2 px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-semibold transition">
+						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 text-neutral-800 rounded-lg text-sm font-semibold transition">
 						<span>←</span> Powrót do testu
 					</button>
 					<button
 						onClick={refetch}
-						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 hover:border-gray-400 rounded-lg text-sm font-semibold text-gray-700 transition">
+						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 rounded-lg text-sm font-semibold text-neutral-800 transition">
 						⟳ Odśwież wyniki
+					</button>
+					<button
+						onClick={handlePrint}
+						disabled={loadingAnswers}
+						className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-neutral-300 hover:border-neutral-500 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg text-sm font-semibold text-neutral-800 transition">
+						🖨 Drukuj PDF
 					</button>
 				</div>
 
@@ -174,11 +186,11 @@ export default function TestResults({ addToast }) {
 							{test.description && <p className="text-gray-600 mt-1">{test.description}</p>}
 						</div>
 						<div className="flex gap-2 flex-wrap">
-							<span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
+							<span className="px-3 py-1 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200">
 								Odpowiedzi: {answers.length}
 							</span>
 							{test.singleChoice && (
-								<span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+								<span className="px-3 py-1 rounded-full text-xs font-semibold bg-black text-white border border-black">
 									Jednokrotny wybór
 								</span>
 							)}
@@ -192,7 +204,7 @@ export default function TestResults({ addToast }) {
 						value={`${stats.avgPercent.toFixed(1)}%`}
 						sub={`${stats.avgScore.toFixed(1)} pkt`}
 					/>
-					<StatCard title="Zdawalność (>=50%)" value={`${stats.passRate.toFixed(1)}%`} accent="green" />
+					<StatCard title="Zdawalność (>=50%)" value={`${stats.passRate.toFixed(1)}%`} />
 					<StatCard
 						title="Najlepszy / Najsłabszy"
 						value={`${stats.bestPercent.toFixed(1)}%`}
@@ -216,8 +228,8 @@ export default function TestResults({ addToast }) {
 								return (
 									<div key={bucket.label} className="flex items-center gap-3">
 										<span className="w-20 text-xs font-semibold text-gray-700">{bucket.label}</span>
-										<div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
-											<div className="h-full bg-linear-to-r from-green-400 to-green-600" style={{ width }} />
+										<div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
+											<div className="h-full bg-linear-to-r from-neutral-400 to-neutral-900" style={{ width }} />
 										</div>
 										<span className="text-xs text-gray-600 min-w-[48px] text-right">{bucket.count} os.</span>
 									</div>
@@ -242,10 +254,14 @@ export default function TestResults({ addToast }) {
 								<div key={q.id}>
 									<p className="text-sm font-semibold text-gray-800 mb-1">{q.title}</p>
 									<div className="flex items-center gap-3">
-										<div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+										<div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
 											<div
 												className={`h-full rounded-full ${
-													q.percent >= 70 ? 'bg-green-500' : q.percent >= 40 ? 'bg-yellow-400' : 'bg-red-400'
+																q.percent >= 70
+																	? 'bg-neutral-900'
+																	: q.percent >= 40
+																	? 'bg-neutral-600'
+																	: 'bg-neutral-400'
 												}`}
 												style={{ width: `${q.percent}%` }}
 											/>
@@ -306,27 +322,29 @@ export default function TestResults({ addToast }) {
 									<div className="space-y-2">
 										{q.answers.map((ans, idx) => {
 											const count = q.optionCounts[idx] || 0
-											const percent = q.totalSubmissions ? (count / q.totalSubmissions) * 100 : 0
+											const percentBase = q.totalSubmissions || 0
+											const percent = percentBase ? (count / percentBase) * 100 : 0
+											const barWidth = Math.min(100, percent)
 											const label = String.fromCharCode(65 + idx)
 											const isImage = ans.type === 'image'
 											const isCorrect = q.correctAnswers.includes(idx)
 											const barClass = isCorrect
-												? 'bg-linear-to-r from-green-400 to-green-600'
-												: 'bg-linear-to-r from-slate-300 to-slate-400'
-											const textClass = isCorrect ? 'text-green-700' : 'text-gray-800'
+												? 'bg-linear-to-r from-neutral-600 to-neutral-900'
+												: 'bg-linear-to-r from-slate-200 to-slate-400'
+											const textClass = isCorrect ? 'text-neutral-900' : 'text-gray-800'
 											return (
 												<div key={idx}>
 													<div className="flex items-center justify-between text-xs text-gray-600 mb-1">
 														<span className={`font-semibold ${textClass}`}>
 															{label}. {isImage ? 'Obraz' : ans.content?.slice(0, 60) || '—'}
-															{isCorrect && <span className="ml-2 text-[11px] font-bold text-green-700">POPRAWNA</span>}
+															{isCorrect && <span className="ml-2 text-[11px] font-bold text-neutral-900">POPRAWNA</span>}
 														</span>
 														<span className="text-gray-700 font-semibold">
 															{percent.toFixed(1)}% ({count})
 														</span>
 													</div>
 													<div className="h-3 bg-white rounded-full overflow-hidden border border-gray-200">
-														<div className={`h-full ${barClass}`} style={{ width: `${percent}%` }} />
+														<div className={`h-full ${barClass}`} style={{ width: `${barWidth}%` }} />
 													</div>
 													{isImage && ans.content && (
 														<div className="mt-2">
@@ -352,8 +370,7 @@ export default function TestResults({ addToast }) {
 }
 
 function StatCard({ title, value, sub, accent = 'blue' }) {
-	const accentClasses =
-		accent === 'green' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-blue-50 text-blue-700 border-blue-100'
+	const accentClasses = 'bg-neutral-100 text-neutral-900 border-neutral-200'
 
 	return (
 		<div className={`rounded-xl border ${accentClasses} p-4 sm:p-5 shadow-sm`}>

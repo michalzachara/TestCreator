@@ -37,8 +37,8 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 	if (!isOpen) return null
 
 	return (
-		<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-			<div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-4 sm:p-6 lg:p-8 max-h-screen overflow-y-auto">
+		<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 py-6 overflow-hidden">
+			<div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-4 sm:p-6 lg:p-8 max-h-[90vh] overflow-y-auto">
 				<h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">
 					{editingTest ? 'Edytuj test' : 'Utwórz nowy test'}
 				</h2>
@@ -55,7 +55,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 							type="text"
 							value={title}
 							onChange={e => setTitle(e.target.value)}
-							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
+							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800 text-sm sm:text-base"
 							placeholder="Wpisz tytuł testu"
 							maxLength={100}
 						/>
@@ -69,7 +69,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 							id="description"
 							value={description}
 							onChange={e => setDescription(e.target.value)}
-							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-sm sm:text-base"
+							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800 resize-none text-sm sm:text-base"
 							placeholder="Wpisz opis testu"
 							rows="4"
 							maxLength={500}
@@ -84,7 +84,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 								type="checkbox"
 								checked={isActive}
 								onChange={e => setIsActive(e.target.checked)}
-								className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer"
+								className="w-5 h-5 text-neutral-900 border-gray-300 rounded focus:ring-2 focus:ring-neutral-800 cursor-pointer"
 							/>
 							<label htmlFor="isActive" className="text-sm text-gray-700 cursor-pointer">
 								Test aktywny
@@ -100,7 +100,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 								type="checkbox"
 								checked={singleChoice}
 								onChange={e => setSingleChoice(e.target.checked)}
-								className="w-5 h-5 mt-0.5 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer"
+								className="w-5 h-5 mt-0.5 text-neutral-900 border-gray-300 rounded focus:ring-2 focus:ring-neutral-800 cursor-pointer"
 							/>
 							<div>
 								<label htmlFor="singleChoice" className="text-sm text-gray-700 cursor-pointer font-semibold block">
@@ -123,7 +123,7 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 							type="datetime-local"
 							value={activeFor}
 							onChange={e => setActiveFor(e.target.value)}
-							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
+							className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800 text-sm sm:text-base"
 						/>
 						<p className="text-xs text-gray-500 mt-1">
 							Wybierz datę i godzinę, do której test będzie dostępny. Pozostaw puste, aby link był ważny cały czas.
@@ -142,13 +142,13 @@ export default function CreateTestModal({ isOpen, onClose, onTestCreated, onTest
 						<button
 							type="button"
 							onClick={onClose}
-							className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200">
+							className="flex-1 bg-white border border-neutral-300 hover:border-neutral-500 text-neutral-800 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200">
 							Anuluj
 						</button>
 						<button
 							type="submit"
 							disabled={loading}
-							className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200">
+							className="flex-1 bg-black hover:bg-neutral-800 disabled:bg-neutral-300 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200">
 							{loading ? 'Zapisywanie...' : editingTest ? 'Zaktualizuj test' : 'Utwórz test'}
 						</button>
 					</div>

@@ -111,18 +111,18 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 	return (
 		<div
 			onClick={() => navigate(`/test/${test._id}`)}
-			className="h-full flex flex-col bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border-l-4 border-green-500 cursor-pointer">
+			className="h-full flex flex-col bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border-l-4 border-black cursor-pointer">
 			{/* Header Section */}
 			<div className="p-4 sm:p-5 lg:p-6">
 				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
 					<div className="flex-1 min-w-0">
-						<h2 className="text-lg sm:text-xl font-bold text-gray-800 transition-colors wrap-break-word group-hover:text-green-600">
+						<h2 className="text-lg sm:text-xl font-bold text-gray-800 transition-colors wrap-break-word group-hover:text-neutral-900">
 							{test.title}
 						</h2>
 						<div className="flex flex-col gap-1 mt-1">
 							<p className="text-gray-400 text-xs sm:text-sm">Utworzono: {createdDate}</p>
 							{test.activeFor && (
-								<p className={`text-xs sm:text-sm ${testIsActive ? 'text-green-600' : 'text-red-600'}`}>
+								<p className={`text-xs sm:text-sm ${testIsActive ? 'text-neutral-800' : 'text-red-600'}`}>
 									{testIsActive ? 'Aktywny do:' : 'Wygasł:'}{' '}
 									{new Date(test.activeFor).toLocaleDateString('pl-PL', {
 										year: 'numeric',
@@ -137,7 +137,7 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 					</div>
 					<div
 						className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-							testIsActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+							testIsActive ? 'bg-black text-white' : 'bg-neutral-200 text-neutral-700'
 						}`}>
 						{testIsActive ? '● Aktywny' : '● Nieaktywny'}
 					</div>
@@ -157,7 +157,7 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 				{test.uniqueLink && (
 					<button
 						onClick={copyLinkToClipboard}
-						className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
+						className="flex items-center justify-center gap-2 px-4 py-3 bg-black hover:bg-neutral-800 text-white font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
 						<span role="img" aria-hidden="true">
 							📋
 						</span>
@@ -165,7 +165,7 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 					</button>
 				)}
 				{test.singleChoice && (
-					<div className="flex items-center gap-2 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+					<div className="flex items-center gap-2 text-xs font-semibold text-neutral-900 bg-neutral-100 border border-neutral-200 rounded-lg px-3 py-2">
 						<span role="img" aria-hidden="true">
 							✅
 						</span>
@@ -175,7 +175,7 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 				<button
 					onClick={handleDuplicateTest}
 					disabled={duplicating}
-					className="flex items-center justify-center gap-2 px-4 py-3 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-400 text-white font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
+					className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-neutral-300 hover:border-neutral-500 disabled:bg-neutral-200 text-neutral-900 font-semibold text-sm sm:text-base rounded-lg transition duration-200 shadow-sm">
 					<span role="img" aria-hidden="true">
 						{duplicating ? '⏳' : '📄'}
 					</span>
@@ -210,13 +210,13 @@ export default function TestCard({ test, onEdit, onDelete, addToast, onDuplicate
 						<div className="flex gap-2 flex-col sm:flex-row w-full">
 							<button
 								onClick={() => onEdit(test)}
-								className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-800 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-green-200 hover:border-green-300">
+								className="flex-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-neutral-200 hover:border-neutral-300">
 								✏️ Edytuj
 							</button>
 							<button
 								onClick={() => setConfirming(true)}
 								disabled={deleting}
-								className="flex-1 bg-red-50 hover:bg-red-100 disabled:bg-gray-100 text-red-700 hover:text-red-800 disabled:text-gray-500 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-red-200 hover:border-red-300 disabled:border-gray-200">
+								className="flex-1 bg-red-50 hover:bg-red-100 disabled:bg-neutral-100 text-red-700 hover:text-red-800 disabled:text-gray-500 font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition duration-200 border border-red-200 hover:border-red-300 disabled:border-gray-200">
 								{deleting ? '⏳' : '🗑️'} <span className="hidden sm:inline">{deleting ? 'Usuwanie' : 'Usuń'}</span>
 							</button>
 						</div>

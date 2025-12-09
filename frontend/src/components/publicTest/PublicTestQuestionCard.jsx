@@ -73,7 +73,7 @@ export default function PublicTestQuestionCard({
 				})()}
 
 			<div className="space-y-3">
-				{singleChoice && <p className="text-xs text-green-700 font-semibold">Wybierz jedną odpowiedź</p>}
+				{singleChoice && <p className="text-xs text-neutral-800 font-semibold">Wybierz jedną odpowiedź</p>}
 				{question.answers.map((answer, aIdx) => {
 					const isSelected = answerRecord?.selectedAnswers.includes(aIdx) || false
 					const isImage = answer.type === 'image'
@@ -84,10 +84,10 @@ export default function PublicTestQuestionCard({
 								onClick={() => onAnswerChange(index, aIdx, !isSelected)}
 								className={`w-full text-left px-4 py-3 rounded-lg border transition cursor-pointer ${
 									isSelected
-										? 'border-2 border-green-500 bg-white shadow-sm'
-										: 'border border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'
+										? 'border-2 border-black bg-white shadow-sm'
+										: 'border border-neutral-300 bg-neutral-50 hover:bg-neutral-100 hover:border-neutral-500'
 								}`}>
-								<span className="font-semibold text-green-600">{String.fromCharCode(65 + aIdx)}.</span>
+								<span className="font-semibold text-neutral-900">{String.fromCharCode(65 + aIdx)}.</span>
 								{isImage ? (
 									<img
 										src={answer.content}

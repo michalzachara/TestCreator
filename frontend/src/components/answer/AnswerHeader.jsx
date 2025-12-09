@@ -34,7 +34,7 @@ export default function AnswerHeader({ data, onBack }) {
 
 				<button
 					onClick={onBack}
-					className="px-4 py-2 text-sm bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition">
+					className="px-4 py-2 text-sm bg-white border border-neutral-300 hover:border-neutral-500 text-gray-700 rounded-lg font-medium transition">
 					← Wróć
 				</button>
 			</div>
@@ -55,7 +55,7 @@ export default function AnswerHeader({ data, onBack }) {
 				<div className="flex flex-col items-start sm:items-end gap-3">
 					<div
 						className={`px-5 py-3 rounded-xl text-center w-full sm:w-auto ${
-							isGood ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+							isGood ? 'bg-black text-white' : 'bg-red-50 text-red-700'
 						}`}>
 						<p className="text-3xl sm:text-4xl font-bold">{percentage}%</p>
 						<p className="text-xs font-semibold">
