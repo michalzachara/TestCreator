@@ -5,7 +5,7 @@ export function useTestForm(editingTest, isOpen) {
 	const [description, setDescription] = useState('')
 	const [isActive, setIsActive] = useState(false)
 	const [activeFor, setActiveFor] = useState('')
-	const [singleChoice, setSingleChoice] = useState(false)
+	const [singleChoice, setSingleChoice] = useState(true)
 
 	useEffect(() => {
 		if (editingTest) {
@@ -24,7 +24,7 @@ export function useTestForm(editingTest, isOpen) {
 			setTitle('')
 			setDescription('')
 			setIsActive(false)
-			setSingleChoice(false)
+			setSingleChoice(true)
 			setActiveFor('')
 		}
 	}, [editingTest, isOpen])
@@ -33,7 +33,7 @@ export function useTestForm(editingTest, isOpen) {
 		setTitle('')
 		setDescription('')
 		setIsActive(false)
-		setSingleChoice(false)
+		setSingleChoice(true)
 		setActiveFor('')
 	}
 
